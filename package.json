@@ -22,6 +22,7 @@
     "react-dom": "18.2.0",
     "react-google-login": "^5.2.2",
     "react-h5-audio-player": "^3.8.4",
+    "react-query": "^3.39.1",
     "react-redux": "^8.0.2",
     "redux": "^4.2.0",
     "redux-thunk": "^2.4.1",
