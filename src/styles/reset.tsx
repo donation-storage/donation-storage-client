@@ -387,7 +387,6 @@ export const globalStyles = css`
     padding: 0.2em 0;
   }
 
-  /* for onlif publishing - start */
   * {
     box-sizing: border-box;
   }
@@ -404,5 +403,4 @@ export const globalStyles = css`
   a:hover {
     text-decoration: none;
   }
-  /* for onlif publishing - end */
 `;
