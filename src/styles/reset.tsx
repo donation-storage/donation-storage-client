@@ -25,6 +25,9 @@ export const globalStyles = css`
     border: 0;
     font-size: 100%;
     vertical-align: baseline;
+    font-family: 'S-CoreDream-3Light', 'NanumSquare', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
   }
 
   /* no border, no margin, no padding for input */
@@ -55,7 +58,7 @@ export const globalStyles = css`
   }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    font-family: 'S-CoreDream-3Light', 'NanumSquare', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
