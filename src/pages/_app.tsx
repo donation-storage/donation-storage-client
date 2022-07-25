@@ -1,4 +1,10 @@
 import '../styles/globals.css';
+import '../styles/font.css';
+import '@fortawesome/fontawesome-svg-core/styles.css';
+
+import { config } from '@fortawesome/fontawesome-svg-core';
+
+config.autoAddCss = false;
 
 import { Global } from '@emotion/react';
 import type { AppProps } from 'next/app';
@@ -6,6 +12,7 @@ import { useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 
+import Head from '../items/Head';
 import { wrapper } from '../redux/store';
 import { globalStyles } from '../styles/reset';
 
@@ -15,6 +22,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <Global styles={globalStyles} />
+      <Head />
       <Component {...pageProps} />
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
