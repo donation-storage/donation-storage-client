@@ -35,6 +35,7 @@ export const globalStyles = css`
     border: 0;
     margin: 0;
     padding: 0;
+    background-color: transparent;
   }
 
   /* make sure to set some focus styles for accessibility */

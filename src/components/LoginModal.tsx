@@ -91,15 +91,15 @@ const LoginModal = ({ isOpen, modalRef }: Props) => {
       <div ref={modalRef} css={modalContainer}>
         <div css={loginTitle}>로그인</div>
         <button css={loginButton('#64449f', '26px', '15px')}>
-          <img src="images/icon-twitch.png" alt="twitch" />
+          <img src="/images/icon-twitch.png" alt="twitch" />
           <span>트위치 로그인</span>
         </button>
         <button css={loginButton('#00bf18', '25px', '15px')}>
-          <img src="images/icon-naver.png" alt="naver" />
+          <img src="/images/icon-naver.png" alt="naver" />
           <span>네이버 로그인</span>
         </button>
         <button css={loginButton('#a0a0a0', '28px', '12.5px')}>
-          <img src="images/icon-google.png" alt="google" />
+          <img src="/images/icon-google.png" alt="google" />
           <span>구글 로그인</span>
         </button>
       </div>

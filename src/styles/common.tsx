@@ -16,3 +16,5 @@ export const flexCenter = css`
   align-items: center;
   justify-content: center;
 `;
+
+export const primaryColor = '#64449f';
