@@ -2,9 +2,10 @@ import { css } from '@emotion/react';
 import { faCircleXmark, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { displayNone, primaryColor } from '../styles/common';
+import { logger } from '../utills/logger';
 
 const searchContainer = css`
   width: 40%;
@@ -48,19 +49,17 @@ const button = css`
   color: ${primaryColor};
 `;
 
-const Search = () => {
-  const router = useRouter();
-  const { query, isReady } = router;
-  const [search, setSearch] = useState('');
+interface Props {
+  searchWord?: string;
+}
 
-  useEffect(() => {
-    if (isReady) {
-      setSearch(query.word as string);
-    }
-  }, [query, isReady]);
+const Search = ({ searchWord }: Props) => {
+  const router = useRouter();
+  const [search, setSearch] = useState(searchWord || '');
 
   const moveToSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
+      logger.log('search', search);
       void router.push(`/search/${search}`);
     }
   };
@@ -70,7 +69,9 @@ const Search = () => {
       <input
         type="text"
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={(e) => {
+          setSearch(e.target.value);
+        }}
         onKeyPress={(e) => {
           void moveToSearch(e);
         }}

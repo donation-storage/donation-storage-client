@@ -13,8 +13,15 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 
 import Head from '../items/Head';
+import initMockAPI from '../mocks';
 import { wrapper } from '../redux/store';
 import { globalStyles } from '../styles/reset';
+import { logger } from '../utills/logger';
+
+if (process.env.NEXT_PUBLIC_USE_API_MOCKING === 'true') {
+  logger.log('Using mock API');
+  void initMockAPI();
+}
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(() => new QueryClient());

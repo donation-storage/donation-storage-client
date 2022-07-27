@@ -9,8 +9,12 @@ import type { RootState } from '../redux/reducers';
 import { flexCenter, largeTitle } from '../styles/common';
 import LoginModal from './LoginModal';
 
+interface Props {
+  searchWord?: string;
+}
+
 const navContainer = css`
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   width: 100%;
@@ -33,7 +37,7 @@ const buttonBox = css`
   }
 `;
 
-const Nav = () => {
+const Nav = ({ searchWord }: Props) => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const { isLogin } = useSelector((state: RootState) => state.loginReducer);
@@ -68,7 +72,7 @@ const Nav = () => {
   return (
     <>
       <header css={navContainer}>
-        <Search />
+        <Search searchWord={searchWord} />
         <div
           css={largeTitle}
           onClick={() => {
