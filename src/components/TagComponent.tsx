@@ -5,7 +5,9 @@ import { primaryColor } from '../styles/common';
 
 const tagComponent = css`
   display: flex;
-  width: 300px;
+  margin: 0 auto;
+  max-width: 300px;
+  width: 100%;
   flex-wrap: wrap;
   gap: 10px;
 `;
@@ -18,6 +20,8 @@ const tagStyle = (isSelected: boolean) => css`
   border-radius: 50px;
   height: 30px;
   background-color: ${isSelected ? primaryColor : '#d1d1d1'};
+  color: ${isSelected ? '#fff' : '#000'};
+  font-weight: ${isSelected ? 900 : 'normal'};
   cursor: pointer;
 `;
 

@@ -1,5 +1,13 @@
 import { css } from '@emotion/react';
 
+export const fontPyeongChangBold = css`
+  font-family: 'PyeongChangPeace-Bold';
+`;
+
+export const fontPyeongChangLight = css`
+  font-family: 'PyeongChangPeace-Light';
+`;
+
 export const displayNone = css`
   display: none;
 `;
@@ -18,3 +26,21 @@ export const flexCenter = css`
 `;
 
 export const primaryColor = '#64449f';
+
+export const mainContainer = css`
+  display: flex;
+`;
+
+export const categorySection = css`
+  flex: 1;
+  height: 100%;
+`;
+
+export const listSection = css`
+  max-width: 900px;
+  flex: 2;
+`;
+
+export const tagSection = css`
+  flex: 1;
+`;

@@ -4,14 +4,9 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import Search from '../items/Search';
 import type { RootState } from '../redux/reducers';
 import { flexCenter, largeTitle } from '../styles/common';
 import LoginModal from './LoginModal';
-
-interface Props {
-  searchWord?: string;
-}
 
 const navContainer = css`
   position: sticky;
@@ -37,7 +32,7 @@ const buttonBox = css`
   }
 `;
 
-const Nav = ({ searchWord }: Props) => {
+const Nav = () => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const { isLogin } = useSelector((state: RootState) => state.loginReducer);
@@ -72,7 +67,6 @@ const Nav = ({ searchWord }: Props) => {
   return (
     <>
       <header css={navContainer}>
-        <Search searchWord={searchWord} />
         <div
           css={largeTitle}
           onClick={() => {
