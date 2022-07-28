@@ -1,11 +1,13 @@
 import axios from 'axios';
 import type { NextPage } from 'next';
 
+import Category from '../components/Category';
 import Nav from '../components/Nav';
 import TagComponent from '../components/TagComponent';
 import Search from '../items/Search';
 import {
   categorySection,
+  container,
   listSection,
   mainContainer,
   tagSection,
@@ -28,17 +30,19 @@ export async function getServerSideProps() {
 }
 
 const Home: NextPage<Props> = ({ tags }) => (
-  <>
+  <div css={container}>
     <Nav />
     <Search />
     <div css={mainContainer}>
-      <section css={categorySection}></section>
+      <section css={categorySection}>
+        <Category />
+      </section>
       <section css={listSection}></section>
       <section css={tagSection}>
         <TagComponent tags={tags} selectedTag={''} />
       </section>
     </div>
-  </>
+  </div>
 );
 
 export default Home;

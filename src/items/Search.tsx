@@ -26,6 +26,7 @@ const searchBox = css`
   padding: 0 30px;
   border: 2px solid ${primaryColor};
   border-radius: 50px;
+  background-color: #fff;
   input {
     width: 100%;
   }
@@ -110,15 +111,21 @@ const Search = ({ searchWord }: Props) => {
 
   const enterToSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      const historySet = new Set([search, ...searchHistory!]);
-      setSearchHistory([...historySet].slice(0, 10));
+      if (search !== '') {
+        const historySet = new Set([search, ...searchHistory!]);
+        setSearchHistory([...historySet].slice(0, 10));
+      }
+
       void router.push(`/search/${search}`);
     }
   };
 
   const clickToSearch = () => {
-    const historySet = new Set([search, ...searchHistory!]);
-    setSearchHistory([...historySet].slice(0, 10));
+    if (search !== '') {
+      const historySet = new Set([search, ...searchHistory!]);
+      setSearchHistory([...historySet].slice(0, 10));
+    }
+
     void router.push(`/search/${search}`);
   };
 

@@ -5,7 +5,7 @@ import { primaryColor } from '../styles/common';
 
 const tagComponent = css`
   display: flex;
-  margin: 0 auto;
+  margin-right: auto;
   max-width: 300px;
   width: 100%;
   flex-wrap: wrap;

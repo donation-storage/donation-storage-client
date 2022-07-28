@@ -14,36 +14,38 @@ import {
 } from '../../styles/common';
 
 interface Props {
-  selectedTag: string;
+  category: 'audio' | 'video';
   tags: string[];
 }
 
-export async function getServerSideProps(context: { params: { tag: string } }) {
+export async function getServerSideProps(context: {
+  params: { category: string };
+}) {
   const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_API}/tag`);
   const { data } = res.data;
 
   return {
     props: {
       tags: data,
-      selectedTag: context.params.tag,
+      category: context.params.category,
     },
   };
 }
 
-const Tag: NextPage<Props> = ({ selectedTag, tags }) => (
+const Home: NextPage<Props> = ({ category, tags }) => (
   <div css={container}>
     <Nav />
     <Search />
     <div css={mainContainer}>
       <section css={categorySection}>
-        <Category />
+        <Category category={category} />
       </section>
       <section css={listSection}></section>
       <section css={tagSection}>
-        <TagComponent tags={tags} selectedTag={selectedTag} />
+        <TagComponent tags={tags} selectedTag={''} />
       </section>
     </div>
   </div>
 );
 
-export default Tag;
+export default Home;

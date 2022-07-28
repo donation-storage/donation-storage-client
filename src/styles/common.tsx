@@ -27,6 +27,12 @@ export const flexCenter = css`
 
 export const primaryColor = '#64449f';
 
+export const container = css`
+  background-color: #f4f4f4;
+  height: 100%;
+  min-height: 100vh;
+`;
+
 export const mainContainer = css`
   display: flex;
 `;
