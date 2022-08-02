@@ -79,10 +79,17 @@ const SearchHistoryTag = (props: {
   deleteSearchHistory: (id: number) => void;
 }) => {
   const { word, id, deleteSearchHistory } = props;
+  const router = useRouter();
 
   return (
     <button css={tag}>
-      <span>{word}</span>
+      <span
+        onClick={() => {
+          void router.push(`/search/${word}`);
+        }}
+      >
+        {word}
+      </span>
       <FontAwesomeIcon
         icon={faXmark}
         onClick={() => {

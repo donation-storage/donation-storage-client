@@ -8,6 +8,14 @@ export const fontPyeongChangLight = css`
   font-family: 'PyeongChangPeace-Light';
 `;
 
+export const fontNanumSquare = css`
+  font-family: 'NanumSquare';
+`;
+
+export const fontInfinity = css`
+  font-family: 'InfinitySans-RegularA1';
+`;
+
 export const displayNone = css`
   display: none;
 `;

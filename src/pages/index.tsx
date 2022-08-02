@@ -2,6 +2,7 @@ import axios from 'axios';
 import type { NextPage } from 'next';
 
 import Category from '../components/Category';
+import ListContainer from '../components/ListContainer';
 import Nav from '../components/Nav';
 import TagComponent from '../components/TagComponent';
 import Search from '../items/Search';
@@ -12,24 +13,35 @@ import {
   mainContainer,
   tagSection,
 } from '../styles/common';
+import type { AudioConfig, VideoConfig } from '../types/api';
 
 interface Props {
-  selectedTag: string;
   tags: string[];
+  list: Array<AudioConfig | VideoConfig>;
+  page: number;
 }
 
-export async function getServerSideProps() {
-  const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_API}/tag`);
-  const { data } = res.data;
+export async function getServerSideProps(context: {
+  query: { page?: string };
+}) {
+  const endpoints = [
+    `${process.env.NEXT_PUBLIC_SERVER_API}/tag`,
+    `${process.env.NEXT_PUBLIC_SERVER_API}/list`,
+  ];
+  const [tagResponse, listResponse] = await axios.all(
+    endpoints.map((endpoint) => axios.get(endpoint)),
+  );
 
   return {
     props: {
-      tags: data,
+      page: context.query.page ? Number(context.query.page) : 1,
+      tags: tagResponse.data.data,
+      list: listResponse.data.data,
     },
   };
 }
 
-const Home: NextPage<Props> = ({ tags }) => (
+const Home: NextPage<Props> = ({ tags, list, page }) => (
   <div css={container}>
     <Nav />
     <Search />
@@ -37,7 +49,9 @@ const Home: NextPage<Props> = ({ tags }) => (
       <section css={categorySection}>
         <Category />
       </section>
-      <section css={listSection}></section>
+      <section css={listSection}>
+        <ListContainer data={list} page={page} />
+      </section>
       <section css={tagSection}>
         <TagComponent tags={tags} selectedTag={''} />
       </section>
