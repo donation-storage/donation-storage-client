@@ -16,14 +16,14 @@ import {
 import type { AudioConfig, VideoConfig } from '../../types/api';
 
 interface Props {
-  word: string;
+  category: 'audio' | 'video';
   tags: string[];
   list: Array<AudioConfig | VideoConfig>;
   page: number;
 }
 
 export async function getServerSideProps(context: {
-  params: { word: string };
+  params: { category: string };
   query: { page?: string };
 }) {
   const endpoints = [
@@ -36,21 +36,21 @@ export async function getServerSideProps(context: {
 
   return {
     props: {
-      word: context.params.word,
       page: context.query.page ? Number(context.query.page) : 1,
       tags: tagResponse.data.data,
       list: listResponse.data.data,
+      category: context.params.category,
     },
   };
 }
 
-const Home: NextPage<Props> = ({ word, tags, list, page }) => (
+const Home: NextPage<Props> = ({ category, tags, list, page }) => (
   <div css={container}>
     <Nav />
-    <Search searchWord={word} />
+    <Search />
     <div css={mainContainer}>
       <section css={categorySection}>
-        <Category />
+        <Category category={category} />
       </section>
       <section css={listSection}>
         <ListContainer data={list} page={page} />

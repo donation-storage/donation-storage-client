@@ -1,19 +1,24 @@
 import { css } from '@emotion/react';
-import { faCircleXmark, faSearch } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCircleXmark,
+  faSearch,
+  faXmark,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
+import useLocalStorage from '../hooks/useLocalStorage';
 import { displayNone, primaryColor } from '../styles/common';
-import { logger } from '../utills/logger';
 
 const searchContainer = css`
-  width: 40%;
+  width: 70%;
   max-width: 600px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  margin: 30px auto;
+`;
+
+const searchBox = css`
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -21,6 +26,7 @@ const searchContainer = css`
   padding: 0 30px;
   border: 2px solid ${primaryColor};
   border-radius: 50px;
+  background-color: #fff;
   input {
     width: 100%;
   }
@@ -49,6 +55,51 @@ const button = css`
   color: ${primaryColor};
 `;
 
+const tagContainer = css`
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+`;
+
+const tag = css`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 5px 5px;
+  background-color: #e2e2e2;
+  border-radius: 5px;
+  font-size: 14px;
+`;
+
+const SearchHistoryTag = (props: {
+  word: string;
+  id: number;
+  deleteSearchHistory: (id: number) => void;
+}) => {
+  const { word, id, deleteSearchHistory } = props;
+  const router = useRouter();
+
+  return (
+    <button css={tag}>
+      <span
+        onClick={() => {
+          void router.push(`/search/${word}`);
+        }}
+      >
+        {word}
+      </span>
+      <FontAwesomeIcon
+        icon={faXmark}
+        onClick={() => {
+          deleteSearchHistory(id);
+        }}
+      />
+    </button>
+  );
+};
+
 interface Props {
   searchWord?: string;
 }
@@ -56,42 +107,71 @@ interface Props {
 const Search = ({ searchWord }: Props) => {
   const router = useRouter();
   const [search, setSearch] = useState(searchWord || '');
+  const [searchHistory, setSearchHistory] = useLocalStorage(
+    'searchHistory',
+    [] as string[],
+  );
 
-  const moveToSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const deleteSearchHistory = (id: number) => {
+    setSearchHistory(searchHistory!.filter((_, index) => index !== id));
+  };
+
+  const enterToSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      logger.log('search', search);
+      if (search !== '') {
+        const historySet = new Set([search, ...searchHistory!]);
+        setSearchHistory([...historySet].slice(0, 10));
+      }
+
       void router.push(`/search/${search}`);
     }
   };
 
+  const clickToSearch = () => {
+    if (search !== '') {
+      const historySet = new Set([search, ...searchHistory!]);
+      setSearchHistory([...historySet].slice(0, 10));
+    }
+
+    void router.push(`/search/${search}`);
+  };
+
   return (
     <div css={searchContainer}>
-      <input
-        type="text"
-        value={search}
-        onChange={(e) => {
-          setSearch(e.target.value);
-        }}
-        onKeyPress={(e) => {
-          void moveToSearch(e);
-        }}
-      />
-      <div css={buttonGroup}>
-        <button
-          css={xButtonBox(search !== '')}
-          onClick={() => {
-            setSearch('');
+      <div css={searchBox}>
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
           }}
-        >
-          <FontAwesomeIcon icon={faCircleXmark} css={xButton} />
-        </button>
-        <button
-          onClick={() => {
-            void router.push(`/search/${search}`);
+          onKeyPress={(e) => {
+            void enterToSearch(e);
           }}
-        >
-          <FontAwesomeIcon icon={faSearch} css={button} />
-        </button>
+        />
+        <div css={buttonGroup}>
+          <button
+            css={xButtonBox(search !== '')}
+            onClick={() => {
+              setSearch('');
+            }}
+          >
+            <FontAwesomeIcon icon={faCircleXmark} css={xButton} />
+          </button>
+          <button onClick={clickToSearch}>
+            <FontAwesomeIcon icon={faSearch} css={button} />
+          </button>
+        </div>
+      </div>
+      <div css={tagContainer}>
+        {searchHistory!.map((word, index) => (
+          <SearchHistoryTag
+            key={index}
+            word={word}
+            id={index}
+            deleteSearchHistory={deleteSearchHistory}
+          />
+        ))}
       </div>
     </div>
   );
