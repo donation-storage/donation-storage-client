@@ -32,6 +32,16 @@ const uploadButton = css`
     ${fontPyeongChangLight}
     font-size: 16px;
     font-weight: 700;
+    border: 1px solid ${primaryColor};
+    border-radius: 50px;
+    padding: 5px 10px;
+    background-color: white;
+    :hover {
+      transition: 0.2s;
+      font-weight: bold;
+      background-color: ${primaryColor};
+      color: white;
+    }
   }
 `;
 
