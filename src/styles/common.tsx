@@ -8,6 +8,10 @@ export const fontPyeongChangLight = css`
   font-family: 'PyeongChangPeace-Light';
 `;
 
+export const fontSCroreDream = css`
+  font-family: 'S-CoreDream-3Light';
+`;
+
 export const fontNanumSquare = css`
   font-family: 'NanumSquare';
 `;
@@ -57,4 +61,8 @@ export const listSection = css`
 
 export const tagSection = css`
   flex: 1;
+`;
+
+export const relative = css`
+  position: relative;
 `;

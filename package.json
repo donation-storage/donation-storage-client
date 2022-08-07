@@ -23,6 +23,7 @@
     "@types/redux": "^3.6.0",
     "axios": "^0.27.2",
     "dotenv": "^16.0.1",
+    "js-video-url-parser": "^0.5.1",
     "next": "12.1.6",
     "next-redux-wrapper": "^7.0.5",
     "react": "18.2.0",
