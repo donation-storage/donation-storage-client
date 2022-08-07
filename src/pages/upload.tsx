@@ -1,9 +1,11 @@
 import { css, keyframes } from '@emotion/react';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import urlParser from 'js-video-url-parser';
 import { useRouter } from 'next/router';
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
+import Modal from '../items/Modal';
 import Switch from '../items/Switch';
 import UploadAudio from '../items/UploadAudio';
 import UploadVideoUrl from '../items/UploadVideoUrl';
@@ -19,6 +21,7 @@ const container = css`
   background-color: #fff;
   display: flex;
   flex-direction: column;
+  box-shadow: 0px -1px 6px rgba(0, 0, 0, 0.1);
 `;
 
 const titleInput = css`
@@ -119,7 +122,7 @@ const toolbarContainer = css`
   background-color: #fff;
   box-shadow: 0px -1px 6px rgba(0, 0, 0, 0.1);
   max-width: 800px;
-  padding: 0 10px;
+  padding: 0 20px;
   border-radius: 0 0 10px 10px;
 `;
 
@@ -150,13 +153,19 @@ const uploadButton = css`
 
 const Upload = () => {
   const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState('');
   const [title, setTitle] = useState('');
   const tagInputRef = useRef<HTMLInputElement>(null);
   const [onTagFocus, setOnTagFocus] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
-  const [type, setType] = useState('video');
+  const [type, setType] = useState('audio');
   const [audio, setAudio] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState('');
+  const [embedConfig, setEmbedConfig] = useState({
+    status: 'none',
+    id: '',
+  });
   const [startHour, setStartHour] = useState('');
   const [startMinute, setStartMinute] = useState('');
   const [startSecond, setStartSecond] = useState('');
@@ -207,6 +216,147 @@ const Upload = () => {
   const onChangeStartSecond = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digit = e.target.value.replace(/\D/g, '');
     setStartSecond(digit);
+  };
+
+  const onBlurStartHour = (e: React.FocusEvent<HTMLInputElement>) => {
+    const hour = e.target.value;
+
+    if (hour === '0' || hour === '00') {
+      setStartHour('');
+    } else if (hour.length === 1) {
+      setStartHour(`0${hour}`);
+    }
+  };
+
+  const onBlurStartMinute = (e: React.FocusEvent<HTMLInputElement>) => {
+    const minute = e.target.value;
+    const numMinute = Number(e.target.value);
+
+    if (minute === '0' || minute === '00') {
+      setStartMinute('');
+    } else if (minute.length === 1) {
+      setStartMinute(`0${minute}`);
+    } else if (numMinute > 59) {
+      const newMinute = String(numMinute - 60);
+      setStartHour(`0${Number(startHour) + 1}`.slice(-2));
+      setStartMinute(`0${newMinute}`.slice(-2));
+    }
+  };
+
+  const onBlurStartSecond = (e: React.FocusEvent<HTMLInputElement>) => {
+    const second = e.target.value;
+    const numSecond = Number(e.target.value);
+
+    if (second === '0' || second === '00') {
+      setStartSecond('');
+    } else if (second.length === 1) {
+      setStartSecond(`0${second}`);
+    } else if (numSecond > 59) {
+      const newSecond = String(numSecond - 60);
+      setStartMinute(`0${Number(startMinute) + 1}`.slice(-2));
+      setStartSecond(`0${newSecond}`.slice(-2));
+    }
+  };
+
+  const onChangeEmbedUrl = useCallback(() => {
+    if (videoUrl === '') {
+      setEmbedConfig({
+        status: 'none',
+        id: '',
+      });
+
+      return;
+    }
+
+    const parsedUrl = urlParser.parse(videoUrl);
+
+    if (!parsedUrl) {
+      setEmbedConfig({
+        status: 'failed',
+        id: '',
+      });
+
+      return;
+    }
+
+    const { mediaType, id, provider } = parsedUrl;
+
+    if (provider === 'twitch') {
+      if (mediaType === 'video' && id) {
+        setEmbedConfig({
+          status: 'twitch/video',
+          id,
+        });
+
+        return;
+      } else if (mediaType === 'clip' && id) {
+        const clipId = videoUrl.split('clip/')[1];
+        setEmbedConfig({
+          status: 'twitch/clip',
+          id: clipId,
+        });
+
+        return;
+      }
+    }
+
+    if (provider === 'youtube' && mediaType === 'video' && id) {
+      setEmbedConfig({
+        status: 'youtube/video',
+        id,
+      });
+
+      return;
+    }
+
+    setEmbedConfig({
+      status: 'failed',
+      id: '',
+    });
+  }, [videoUrl]);
+
+  useEffect(() => {
+    onChangeEmbedUrl();
+  }, [onChangeEmbedUrl]);
+
+  const checkUpload = () => {
+    if (title === '') {
+      setModalContent('제목을 입력해주세요.');
+      setIsModalOpen(true);
+
+      return false;
+    } else if (tags.length < 2) {
+      setModalContent('태그를 입력해주세요.(최소 2개)');
+      setIsModalOpen(true);
+
+      return false;
+    } else if (type === 'audio' && !audio) {
+      setModalContent('파일을 업로드해주세요.');
+      setIsModalOpen(true);
+
+      return false;
+    } else if (type === 'video' && videoUrl === '') {
+      setModalContent('URL을 입력해주세요.');
+      setIsModalOpen(true);
+
+      return false;
+    } else if (type === 'video' && embedConfig.status === 'failed') {
+      setModalContent('올바르지 않은 URL입니다.');
+      setIsModalOpen(true);
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const onSubmit = () => {
+    if (!checkUpload()) {
+      return;
+    }
+
+    setModalContent('등록되었습니다.');
+    setIsModalOpen(true);
   };
 
   return (
@@ -281,13 +431,17 @@ const Upload = () => {
         ) : (
           <UploadVideoUrl
             videoUrl={videoUrl}
+            embedConfig={embedConfig}
             onChangeVideoUrl={onChangeVideoUrl}
             startHour={startHour}
             onChangeStartHour={onChangeStartHour}
+            onBlurStartHour={onBlurStartHour}
             startMinute={startMinute}
             onChangeStartMinute={onChangeStartMinute}
+            onBlurStartMinute={onBlurStartMinute}
             startSecond={startSecond}
             onChangeStartSecond={onChangeStartSecond}
+            onBlurStartSecond={onBlurStartSecond}
           />
         )}
       </div>
@@ -301,8 +455,23 @@ const Upload = () => {
           <FontAwesomeIcon icon={faArrowLeft} />
           <span>나가기</span>
         </button>
-        <button css={uploadButton}>등록하기</button>
+        <button
+          css={uploadButton}
+          onClick={() => {
+            void onSubmit();
+          }}
+        >
+          등록하기
+        </button>
       </div>
+      {isModalOpen && (
+        <Modal
+          content={modalContent}
+          onClose={() => {
+            setIsModalOpen(false);
+          }}
+        />
+      )}
     </>
   );
 };
