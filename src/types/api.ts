@@ -23,3 +23,7 @@ export interface AudioConfig {
   createdAt: string;
   like: number;
 }
+
+export const isAudioConfig = (
+  config: AudioConfig | VideoConfig,
+): config is AudioConfig => config.type === 'audio';

@@ -1,10 +1,9 @@
 import axios from 'axios';
-import type { NextPage } from 'next';
 
 import Category from '../../components/Category';
-import ListComponent from '../../components/ListComponent';
 import Nav from '../../components/Nav';
 import TagComponent from '../../components/TagComponent';
+import ViewComponent from '../../components/ViewComponent';
 import Search from '../../items/Search';
 import {
   categorySection,
@@ -16,44 +15,37 @@ import {
 import type { AudioConfig, VideoConfig } from '../../types/api';
 
 interface Props {
-  word: string;
   tags: string[];
-  list: Array<AudioConfig | VideoConfig>;
-  page: number;
+  data: VideoConfig | AudioConfig;
 }
 
-export async function getServerSideProps(context: {
-  params: { word: string };
-  query: { page?: string };
-}) {
+export async function getServerSideProps(context: { params: { id: string } }) {
   const endpoints = [
     `${process.env.NEXT_PUBLIC_SERVER_API}/tag`,
-    `${process.env.NEXT_PUBLIC_SERVER_API}/list`,
+    `${process.env.NEXT_PUBLIC_SERVER_API}/post/${context.params.id}`,
   ];
-  const [tagResponse, listResponse] = await axios.all(
+  const [tagResponse, viewResponse] = await axios.all(
     endpoints.map((endpoint) => axios.get(endpoint)),
   );
 
   return {
     props: {
-      word: context.params.word,
-      page: context.query.page ? Number(context.query.page) : 1,
       tags: tagResponse.data.data,
-      list: listResponse.data.data,
+      data: viewResponse.data.data,
     },
   };
 }
 
-const Home: NextPage<Props> = ({ word, tags, list, page }) => (
+const View = ({ data, tags }: Props) => (
   <div css={container}>
     <Nav />
-    <Search searchWord={word} />
+    <Search />
     <div css={mainContainer}>
       <section css={categorySection}>
         <Category />
       </section>
       <section css={listSection}>
-        <ListComponent data={list} page={page} />
+        <ViewComponent data={data} />
       </section>
       <section css={tagSection}>
         <TagComponent tags={tags} selectedTag={''} />
@@ -62,4 +54,4 @@ const Home: NextPage<Props> = ({ word, tags, list, page }) => (
   </div>
 );
 
-export default Home;
+export default View;
