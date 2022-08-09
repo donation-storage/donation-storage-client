@@ -8,7 +8,10 @@ import {
   faShareFromSquare,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState } from 'react';
 
+import Dialog from '../items/Dialog';
+import VideoEmbed from '../items/VideoEmbed';
 import {
   fontNanumSquare,
   fontSCroreDream,
@@ -16,7 +19,7 @@ import {
 } from '../styles/common';
 import type { AudioConfig, VideoConfig } from '../types/api';
 import { isAudioConfig } from '../types/api';
-import { srcToFile } from '../utills/common';
+import { formatStartTime, srcToFile } from '../utills/common';
 
 const container = css`
   display: flex;
@@ -93,6 +96,11 @@ const audioBox = css`
   gap: 50px;
 `;
 
+const videoBox = css`
+  display: flex;
+  flex-direction: column;
+`;
+
 const audio = css`
   margin: 0 auto;
 `;
@@ -118,6 +126,32 @@ const fileInfo = css`
   }
 `;
 
+const videoInfoBox = css`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  h3 {
+    background-color: #f0f0f0;
+    color: #505050;
+    padding: 2px 4px;
+    border-radius: 3px;
+  }
+  div {
+    font-size: 15px;
+  }
+  button {
+    font-size: 15px;
+    font-weight: 800;
+    padding: 4px 6px;
+    :hover {
+      background-color: #e8e8e87e;
+      border-radius: 4px;
+      transition: 0.6s;
+    }
+  }
+`;
+
 const funcBox = css`
   display: flex;
   align-items: center;
@@ -140,6 +174,10 @@ const funcBox = css`
 const ViewComponent = (props: { data: VideoConfig | AudioConfig }) => {
   const { postName, tags, writer, createdAt, like } = props.data;
   const file = isAudioConfig(props.data) ? props.data.file : '';
+  const url = !isAudioConfig(props.data) ? props.data.url : '';
+  const startTime = !isAudioConfig(props.data) ? props.data.startTime : 0;
+  const [hour, minute, second] = formatStartTime(startTime);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const download = async () => {
     const blob = await srcToFile(file, file.split('/').reverse()[0]);
@@ -156,58 +194,90 @@ const ViewComponent = (props: { data: VideoConfig | AudioConfig }) => {
     link.remove();
   };
 
+  const openDialog = () => {
+    setIsDialogOpen(true);
+    setTimeout(() => {
+      setIsDialogOpen(false);
+    }, 800);
+  };
+
+  const copyVideoUrl = () => {
+    void navigator.clipboard.writeText(url);
+    openDialog();
+  };
+
   return (
-    <div css={container}>
-      <button css={backButton}>
-        <FontAwesomeIcon icon={faArrowLeft} />
-        <span>목록으로</span>
-      </button>
-      <div css={titleBox}>
-        <h1 css={title}>{postName}</h1>
-        <div css={tagBox}>
-          {tags.map((tag, index) => (
-            <span key={index}>#{tag.tagName}</span>
-          ))}
-        </div>
-      </div>
-      <div css={subTitleBox}>
-        <div css={infoBox}>
-          <div>{writer}</div>
-          <div>{createdAt}</div>
-        </div>
-        <button>
-          <FontAwesomeIcon icon={faEllipsisV} />
+    <>
+      <div css={container}>
+        <button css={backButton}>
+          <FontAwesomeIcon icon={faArrowLeft} />
+          <span>목록으로</span>
         </button>
-      </div>
-      <div css={contentBox}>
-        {isAudioConfig(props.data) ? (
-          <div css={audioBox}>
-            <div css={fileInfo}>
-              <span>{file.split('/').reverse()[0]}</span>
-              <button
-                onClick={() => {
-                  void download();
-                }}
-              >
-                다운로드
-              </button>
-            </div>
-            <audio src={file} controls css={audio} />
+        <div css={titleBox}>
+          <h1 css={title}>{postName}</h1>
+          <div css={tagBox}>
+            {tags.map((tag, index) => (
+              <span key={index}>#{tag.tagName}</span>
+            ))}
           </div>
-        ) : (
-          <div></div>
-        )}
+        </div>
+        <div css={subTitleBox}>
+          <div css={infoBox}>
+            <div>{writer}</div>
+            <div>{createdAt}</div>
+          </div>
+          <button>
+            <FontAwesomeIcon icon={faEllipsisV} />
+          </button>
+        </div>
+        <div css={contentBox}>
+          {isAudioConfig(props.data) ? (
+            <div css={audioBox}>
+              <div css={fileInfo}>
+                <span>{file.split('/').reverse()[0]}</span>
+                <button
+                  onClick={() => {
+                    void download();
+                  }}
+                >
+                  다운로드
+                </button>
+              </div>
+              <audio src={file} controls css={audio} />
+            </div>
+          ) : (
+            <div css={videoBox}>
+              <div css={videoInfoBox}>
+                <h3>URL</h3>
+                <div>{url}</div>
+                <h3>시작시간</h3>
+                <div>
+                  {hour} : {minute} : {second}
+                </div>
+                <button
+                  onClick={() => {
+                    copyVideoUrl();
+                  }}
+                >
+                  URL 복사
+                </button>
+              </div>
+              <VideoEmbed videoUrl={url} startTime={startTime} />
+            </div>
+          )}
+        </div>
+        <div css={funcBox}>
+          <button>
+            <span>{like}</span>
+            <FontAwesomeIcon icon={faHeart} />
+          </button>
+          <button>
+            <FontAwesomeIcon icon={faShareFromSquare} />
+          </button>
+        </div>
       </div>
-      <div css={funcBox}>
-        <button>
-          <span>{like}</span>
-          <FontAwesomeIcon icon={faHeart} />
-        </button>
-        <button>
-          <FontAwesomeIcon icon={faShareFromSquare} />
-        </button>
-      </div>
-    </div>
+      <Dialog message="복사되었습니다." isOpen={isDialogOpen} />
+    </>
   );
 };
 

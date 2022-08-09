@@ -18,3 +18,11 @@ export const srcToFile = async (src: string, fileName: string) => {
 
   return new File([response.data], fileName, { type: mimeType });
 };
+
+export const formatStartTime = (startTime: number): string[] => {
+  const hour = Math.floor(startTime / 3600);
+  const minute = Math.floor((startTime % 3600) / 60);
+  const second = Math.floor(startTime % 60);
+
+  return [hour, minute, second].map((time) => time.toString().padStart(2, '0'));
+};

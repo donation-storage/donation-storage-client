@@ -8,6 +8,7 @@ export interface VideoConfig {
   postName: string;
   tags: TagConfig[];
   url: string;
+  startTime: number;
   writer: string;
   createdAt: string;
   like: number;

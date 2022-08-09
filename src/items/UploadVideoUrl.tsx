@@ -117,7 +117,7 @@ const EmbedVideo = ({ embedConfig }: EmbedVideoProps) => {
       <iframe
         width="640"
         height="360"
-        src={`https://www.youtube.com/embed/${id}?origin=http://${process.env.NEXT_PUBLIC_CLINET_DOMAIN}`}
+        src={`https://www.youtube.com/embed/${id}?origin=${process.env.NEXT_PUBLIC_CLINET_ORIGIN}`}
         frameBorder="0"
       ></iframe>
     );
