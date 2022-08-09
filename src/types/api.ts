@@ -8,6 +8,7 @@ export interface VideoConfig {
   postName: string;
   tags: TagConfig[];
   url: string;
+  startTime: number;
   writer: string;
   createdAt: string;
   like: number;
@@ -23,3 +24,7 @@ export interface AudioConfig {
   createdAt: string;
   like: number;
 }
+
+export const isAudioConfig = (
+  config: AudioConfig | VideoConfig,
+): config is AudioConfig => config.type === 'audio';

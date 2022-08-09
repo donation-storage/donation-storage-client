@@ -56,6 +56,7 @@ export const categorySection = css`
 
 export const listSection = css`
   max-width: 900px;
+  width: 100%;
   flex: 2;
 `;
 

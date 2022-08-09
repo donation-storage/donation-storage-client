@@ -130,40 +130,52 @@ interface Props {
   data: Array<AudioConfig | VideoConfig>;
 }
 
-const AudioRecord = ({ config }: { config: AudioConfig }) => (
-  <div css={recordContainer}>
-    <div css={recordBox}>
-      <div css={flexRow}>
-        <FontAwesomeIcon icon={faMusic} css={icon('#565656')} />
-        <h1 css={postNameStyle}>{config.postName}</h1>{' '}
-      </div>{' '}
-      <div css={flexRow}>
-        <span css={subInfoStyle}>[01:26]</span>
-        <span css={subInfoStyle}>{config.createdAt}</span>
+const AudioRecord = ({ config }: { config: AudioConfig }) => {
+  const router = useRouter();
+
+  return (
+    <div css={recordContainer}>
+      <div css={recordBox}>
+        <div css={flexRow}>
+          <FontAwesomeIcon icon={faMusic} css={icon('#565656')} />
+          <h1
+            css={postNameStyle}
+            onClick={() => {
+              void router.push(`/view/${config.id}`);
+            }}
+          >
+            {config.postName}
+          </h1>{' '}
+        </div>
+        <div css={flexRow}>
+          <span css={subInfoStyle}>[01:26]</span>
+          <span css={subInfoStyle}>{config.createdAt}</span>
+        </div>
+      </div>
+      <div css={tagBox}>
+        {config.tags.map((tag, id) => (
+          <span key={id}>#{tag.tagName}</span>
+        ))}
+      </div>
+      <div css={recordBox}>
+        <span css={writerStyle}>{config.writer}</span>
+        <span css={likeBox}>
+          <FontAwesomeIcon
+            icon={faHeart}
+            css={css`
+              color: #ee607a;
+            `}
+          />
+          <span>{config.like}</span>
+        </span>
       </div>
     </div>
-    <div css={tagBox}>
-      {config.tags.map((tag, id) => (
-        <span key={id}>#{tag.tagName}</span>
-      ))}
-    </div>
-    <div css={recordBox}>
-      <span css={writerStyle}>{config.writer}</span>
-      <span css={likeBox}>
-        <FontAwesomeIcon
-          icon={faHeart}
-          css={css`
-            color: #ee607a;
-          `}
-        />
-        <span>{config.like}</span>
-      </span>
-    </div>
-  </div>
-);
+  );
+};
 
 const VideoRecord = ({ config }: { config: VideoConfig }) => {
   const isYoutube = isYoutueUrl(config.url);
+  const router = useRouter();
 
   return (
     <div css={recordContainer}>
@@ -173,8 +185,15 @@ const VideoRecord = ({ config }: { config: VideoConfig }) => {
             icon={isYoutube ? (faYoutube as any) : (faTwitch as any)}
             css={isYoutube ? icon('#ff0000') : icon(primaryColor)}
           />
-          <h1 css={postNameStyle}>{config.postName}</h1>{' '}
-        </div>{' '}
+          <h1
+            css={postNameStyle}
+            onClick={() => {
+              void router.push(`/view/${config.id}`);
+            }}
+          >
+            {config.postName}
+          </h1>{' '}
+        </div>
         <div css={flexRow}>
           <span css={subInfoStyle}>영상제목</span>
           <span css={subInfoStyle}>{config.createdAt}</span>
@@ -201,7 +220,7 @@ const VideoRecord = ({ config }: { config: VideoConfig }) => {
   );
 };
 
-const ListContainer = ({ data, page }: Props) => {
+const ListComponent = ({ data, page }: Props) => {
   const router = useRouter();
 
   const setPage = (pageTo: number) => {
@@ -227,4 +246,4 @@ const ListContainer = ({ data, page }: Props) => {
   );
 };
 
-export default ListContainer;
+export default ListComponent;

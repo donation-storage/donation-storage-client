@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { NextPage } from 'next';
 
 import Category from '../../components/Category';
-import ListContainer from '../../components/ListContainer';
+import ListComponent from '../../components/ListComponent';
 import Nav from '../../components/Nav';
 import TagComponent from '../../components/TagComponent';
 import Search from '../../items/Search';
@@ -53,7 +53,7 @@ const Home: NextPage<Props> = ({ category, tags, list, page }) => (
         <Category category={category} />
       </section>
       <section css={listSection}>
-        <ListContainer data={list} page={page} />
+        <ListComponent data={list} page={page} />
       </section>
       <section css={tagSection}>
         <TagComponent tags={tags} selectedTag={''} />
