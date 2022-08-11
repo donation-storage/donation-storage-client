@@ -8,6 +8,7 @@ import {
   faShareFromSquare,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 import Dialog from '../items/Dialog';
@@ -178,6 +179,7 @@ const ViewComponent = (props: { data: VideoConfig | AudioConfig }) => {
   const startTime = !isAudioConfig(props.data) ? props.data.startTime : 0;
   const [hour, minute, second] = formatStartTime(startTime);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const router = useRouter();
 
   const download = async () => {
     const blob = await srcToFile(file, file.split('/').reverse()[0]);
@@ -209,7 +211,12 @@ const ViewComponent = (props: { data: VideoConfig | AudioConfig }) => {
   return (
     <>
       <div css={container}>
-        <button css={backButton}>
+        <button
+          css={backButton}
+          onClick={() => {
+            router.back();
+          }}
+        >
           <FontAwesomeIcon icon={faArrowLeft} />
           <span>목록으로</span>
         </button>
