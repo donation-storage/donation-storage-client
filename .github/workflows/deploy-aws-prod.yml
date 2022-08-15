@@ -1,0 +1,57 @@
+name: Build for main
+on:
+  push:
+    branches:
+      - deploy
+      # - main
+
+    
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-build-
+            ${{ runner.OS }}-
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Build and push to ECR
+        uses: whoan/docker-build-with-cache-action@v5
+        with:
+          registry: public.ecr.aws
+          image_name: /g6t4g5a6/donation-storage-client
+          image_tag: client
+          dockerfile: Dockerfile
+          # pull_image_and_stages: false
+
+      # Docker Hub에 새로운 Image가 push 완료되면 CodeDeploy Agent가 동작되도록 합니다.
+      # --application-name과 --deployment-group-name은 아까 작성하신 애플리케이션 이름과 그룹 이름으로 대체하시면 됩니다.
+      # [Your GitHub Repository] 예시) Woomin-Jeon/facebook-clone-server
+      # "commitId=${GITHUB_SHA}" 코드가 자동으로 최신 commit을 불러옵니다.
+      # 아까 보관해두었던 AWS_ACCESS_KEY_ID와 AWS_SECRET_ACCESS_KEY는 GitHub secrets에 저장해둡니다.
+      # aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 120122301167.dkr.ecr.ap-northeast-2.amazonaws.com
+      # docker push 120122301167.dkr.ecr.ap-northeast-2.amazonaws.com/nginx-onlif-landing:latest
+      # - name: Trigger the CodeDeploy in EC2 instance
+      #   run: aws deploy --region ap-northeast-2 create-deployment --application-name onlif-landing-application --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name code-deploy-group-onlif-landing-dev --github-location repository=bestbrothers/onlif,commitId=${GITHUB_SHA}
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     Default_region_name: ap-northeast-2
