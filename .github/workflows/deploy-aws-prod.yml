@@ -37,7 +37,7 @@ jobs:
         uses: whoan/docker-build-with-cache-action@v5
         with:
           registry: public.ecr.aws
-          image_name: /g6t4g5a6/donation-storage-client
+          image_name: g6t4g5a6/donation-storage-client
           image_tag: client
           dockerfile: Dockerfile
           # pull_image_and_stages: false
