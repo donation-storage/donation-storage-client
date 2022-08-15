@@ -39,7 +39,7 @@ jobs:
           registry: public.ecr.aws
           image_name: g6t4g5a6/donation-storage-client
           image_tag: client
-          dockerfile: Dockerfile
+          compose_file: docker-compose.yml
           # pull_image_and_stages: false
 
       # Docker Hub에 새로운 Image가 push 완료되면 CodeDeploy Agent가 동작되도록 합니다.

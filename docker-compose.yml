@@ -1,0 +1,9 @@
+version: "3"
+services:
+  donation-storage-client:
+    container_name: donation-storage-client
+    restart: always
+    build: .
+    image: public.ecr.aws/g6t4g5a6/donation-storage-client:client
+    ports:
+      - 80:3000
