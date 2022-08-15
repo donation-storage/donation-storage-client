@@ -6,44 +6,32 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 
 import Paginate from '../items/Paginate';
-import {
-  fontNanumSquare,
-  fontPyeongChangLight,
-  primaryColor,
-} from '../styles/common';
+import { fontNanumSquare, primaryColor } from '../styles/common';
 import type { AudioConfig, VideoConfig } from '../types/api';
 import { isYoutueUrl } from '../utills/common';
-import { logger } from '../utills/logger';
 
 const container = css`
   display: flex;
   flex-direction: column;
-  margin: 0 auto;
+  margin: 60px auto 0 auto;
   max-width: 800px;
   width: 90%;
 `;
 
-const uploadButton = css`
+const titleBox = css`
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 10px;
-  > button {
-    color: ${primaryColor};
-    ${fontPyeongChangLight}
-    font-size: 16px;
-    font-weight: 700;
-    border: 1px solid ${primaryColor};
-    border-radius: 50px;
-    padding: 5px 10px;
-    background-color: white;
-    :hover {
-      transition: 0.2s;
-      font-weight: bold;
-      background-color: ${primaryColor};
-      color: white;
-    }
+  flex-direction: column;
+  gap: 15px;
+  > h1 {
+    ${fontNanumSquare}
+    font-size: 24px;
   }
+  > h2 {
+    ${fontNanumSquare}
+    font-size: 16px;
+    color: #666666;
+  }
+  margin-bottom: 25px;
 `;
 
 const listBox = css`
@@ -51,18 +39,21 @@ const listBox = css`
   flex-direction: column;
   width: 100%;
   align-items: center;
-  background-color: #e4e4e4;
   overflow: hidden;
-  border-radius: 3px;
-  padding: 1px;
+  border-radius: 8px;
+  background-color: #fefdff;
+  box-shadow: 0px -1px 6px rgba(0, 0, 0, 0.075);
+  padding: 10px 15px;
   gap: 1px;
+  > div:not(:last-child) {
+    border-bottom: 1px solid #e8e8e8;
+  }
 `;
 
 const recordContainer = css`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background-color: #fff;
   width: 100%;
   padding: 10px;
 `;
@@ -111,13 +102,6 @@ const tagBox = css`
   }
 `;
 
-const writerStyle = css`
-  padding-left: 5px;
-  font-size: 13.5px;
-  color: #575757;
-  ${fontNanumSquare}
-`;
-
 const likeBox = css`
   display: flex;
   gap: 5px;
@@ -128,7 +112,10 @@ const likeBox = css`
 
 interface Props {
   page: number;
+  setPage: (page: number) => void;
   data: Array<AudioConfig | VideoConfig>;
+  nickname: string;
+  title: string;
 }
 
 const AudioRecord = ({ config }: { config: AudioConfig }) => {
@@ -146,20 +133,19 @@ const AudioRecord = ({ config }: { config: AudioConfig }) => {
             }}
           >
             {config.postName}
-          </h1>{' '}
+          </h1>
         </div>
         <div css={flexRow}>
           <span css={subInfoStyle}>[01:26]</span>
           <span css={subInfoStyle}>{config.createdAt}</span>
         </div>
       </div>
-      <div css={tagBox}>
-        {config.tags.map((tag, id) => (
-          <span key={id}>#{tag.tagName}</span>
-        ))}
-      </div>
       <div css={recordBox}>
-        <span css={writerStyle}>{config.writer}</span>
+        <div css={tagBox}>
+          {config.tags.map((tag, id) => (
+            <span key={id}>#{tag.tagName}</span>
+          ))}
+        </div>
         <span css={likeBox}>
           <FontAwesomeIcon
             icon={faHeart}
@@ -193,20 +179,19 @@ const VideoRecord = ({ config }: { config: VideoConfig }) => {
             }}
           >
             {config.postName}
-          </h1>{' '}
+          </h1>
         </div>
         <div css={flexRow}>
           <span css={subInfoStyle}>영상제목</span>
           <span css={subInfoStyle}>{config.createdAt}</span>
         </div>
       </div>
-      <div css={tagBox}>
-        {config.tags.map((tag, id) => (
-          <span key={id}>#{tag.tagName}</span>
-        ))}
-      </div>
       <div css={recordBox}>
-        <span css={writerStyle}>{config.writer}</span>
+        <div css={tagBox}>
+          {config.tags.map((tag, id) => (
+            <span key={id}>#{tag.tagName}</span>
+          ))}
+        </div>
         <span css={likeBox}>
           <FontAwesomeIcon
             icon={faHeart}
@@ -221,40 +206,23 @@ const VideoRecord = ({ config }: { config: VideoConfig }) => {
   );
 };
 
-const ListComponent = ({ data, page }: Props) => {
-  const router = useRouter();
-  logger.log(router);
-
-  const setPage = (pageTo: number) => {
-    void router.push({
-      pathname: router.asPath.split('?')[0],
-      query: { page: pageTo },
-    });
-  };
-
-  return (
-    <div css={container}>
-      <div css={uploadButton}>
-        <button
-          onClick={() => {
-            void router.push('/upload');
-          }}
-        >
-          등록
-        </button>
-      </div>
-      <div css={listBox}>
-        {data.map((record) =>
-          record.type === 'audio' ? (
-            <AudioRecord config={record} />
-          ) : (
-            <VideoRecord config={record} />
-          ),
-        )}
-      </div>
-      <Paginate page={page} count={100} setPage={setPage} />
+const MypageList = ({ data, page, setPage, nickname, title }: Props) => (
+  <div css={container}>
+    <div css={titleBox}>
+      <h1>{nickname}</h1>
+      <h2>{title}</h2>
     </div>
-  );
-};
+    <div css={listBox}>
+      {data.map((record) =>
+        record.type === 'audio' ? (
+          <AudioRecord config={record} />
+        ) : (
+          <VideoRecord config={record} />
+        ),
+      )}
+    </div>
+    <Paginate page={page} count={100} setPage={setPage} itemsCountPerPage={5} />
+  </div>
+);
 
-export default ListComponent;
+export default MypageList;

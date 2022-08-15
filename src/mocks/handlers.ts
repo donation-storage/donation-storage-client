@@ -143,4 +143,14 @@ export const handlers = [
       );
     },
   ),
+  rest.get<{ data: Array<AudioConfig | VideoConfig> }>(
+    'http://msw.mock/mypage',
+    (req, res, ctx) =>
+      res(
+        ctx.status(200),
+        ctx.json({
+          data: postList.slice(0, 5),
+        }),
+      ),
+  ),
 ];

@@ -13,6 +13,10 @@ import { fontSCroreDream, primaryColor } from '../styles/common';
 import { regexTag } from '../utills/common';
 
 const container = css`
+  background-color: #f7fafb;
+`;
+
+const innerContainer = css`
   height: 100vh;
   max-width: 800px;
   margin: 0 auto;
@@ -360,8 +364,8 @@ const Upload = () => {
   };
 
   return (
-    <>
-      <div css={container}>
+    <div css={container}>
+      <div css={innerContainer}>
         <input
           type="text"
           placeholder="제목을 입력하세요"
@@ -472,7 +476,7 @@ const Upload = () => {
           }}
         />
       )}
-    </>
+    </div>
   );
 };
 
