@@ -113,7 +113,11 @@ const MyPageSideBar: React.FC<Props> = ({ children, path }) => {
             <span>D</span>
             <span>도네저장소</span>
           </button>
-          <button>
+          <button
+            onClick={() => {
+              void router.push('/');
+            }}
+          >
             <FontAwesomeIcon icon={faAngleLeft} />
           </button>
         </div>
