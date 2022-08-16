@@ -60,9 +60,9 @@ jobs:
       # 아까 보관해두었던 AWS_ACCESS_KEY_ID와 AWS_SECRET_ACCESS_KEY는 GitHub secrets에 저장해둡니다.
       # aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 120122301167.dkr.ecr.ap-northeast-2.amazonaws.com
       # docker push 120122301167.dkr.ecr.ap-northeast-2.amazonaws.com/nginx-onlif-landing:latest
-      # - name: Trigger the CodeDeploy in EC2 instance
-      #   run: aws deploy --region ap-northeast-2 create-deployment --application-name onlif-landing-application --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name code-deploy-group-onlif-landing-dev --github-location repository=bestbrothers/onlif,commitId=${GITHUB_SHA}
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     Default_region_name: ap-northeast-2
+      - name: Trigger the CodeDeploy in EC2 instance
+        run: aws deploy --region ap-northeast-2 create-deployment --application-name donation-storage-deploy --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name donation-storage-codedeploy --github-location repository=donation-storage/donation-storage-client,commitId=${GITHUB_SHA}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          Default_region_name: ap-northeast-2
