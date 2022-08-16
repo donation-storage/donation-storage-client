@@ -43,7 +43,10 @@ jobs:
           ssm-path: /
           format: dotenv
           output: .env
-          decryption: true
+          decryption: false
+
+      - name: Read .env
+        run: cat .env
 
       - name: Build and push to ECR
         uses: whoan/docker-build-with-cache-action@v5
