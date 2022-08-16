@@ -2,8 +2,7 @@ name: Build for main
 on:
   push:
     branches:
-      - deploy
-      # - main
+      - main
 
     
 
