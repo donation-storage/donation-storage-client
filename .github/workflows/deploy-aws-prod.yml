@@ -36,17 +36,14 @@ jobs:
       - name: Creating .env file from SSM
         uses: deptno/action-aws-ssm-to-dotenv@v1.3.1
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }} # required
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # required
-          AWS_DEFAULT_REGION: ap-northeast-2 # required
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-northeast-2
         with:
           ssm-path: /
           format: dotenv
           output: .env
           decryption: false
-
-      - name: Read .env
-        run: cat .env
 
       - name: Build and push to ECR
         uses: whoan/docker-build-with-cache-action@v5
