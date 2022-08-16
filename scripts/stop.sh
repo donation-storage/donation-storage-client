@@ -1,4 +1,3 @@
-#!/bin/bash
 cd /home/ubuntu/donation-storage-client
-pm2 stop index.js 2> /dev/null || true
-pm2 delete index.js 2> /dev/null || true
+
+docker kill $(docker ps -q) 2> /dev/null || true
