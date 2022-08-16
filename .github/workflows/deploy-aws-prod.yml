@@ -40,7 +40,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-northeast-2
         with:
-          ssm-path: /opensource/action-aws-ssm-to-dotenv
+          ssm-path: /
           format: shell
           output: .env
           decryption: true
