@@ -2,7 +2,7 @@ cd /home/ubuntu/donation-storage-client
 
 docker kill $(docker ps -q)
 docker rm -f $(docker ps -aq)
-docker rmi -f $(docker images)
+docker rmi -f $(docker images -a -q)
 
 docker system prune --all --force
 
