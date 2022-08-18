@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -7,6 +8,7 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '../redux/reducers';
 import { flexCenter, largeTitle } from '../styles/common';
 import LoginModal from './LoginModal';
+import MenuModal from './MenuModal';
 
 const navContainer = css`
   position: sticky;
@@ -20,40 +22,64 @@ const navContainer = css`
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  @media (max-width: 1023px) {
+    padding: 0 20px;
+    gap: 20px;
+  }
+`;
+
+const menuButton = (isOpen: boolean) => css`
+  width: 30px;
+  * {
+    color: #414141;
+    font-size: ${isOpen ? '23px' : '20px'};
+  }
+  @media (min-width: 1024px) {
+    display: none;
+  }
 `;
 
 const buttonBox = css`
   ${flexCenter}
   gap: 30px;
+  margin-left: auto;
   > div {
     font-size: 16px;
     cursor: pointer;
+  }
+  @media (max-width: 1023px) {
+    display: none;
   }
 `;
 
 const Nav = () => {
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isLogin } = useSelector((state: RootState) => state.loginReducer);
 
-  const modalRef = useRef<HTMLDivElement | null>(null);
-  const loginRef = useRef<HTMLDivElement | null>(null);
+  const loginModalRef = useRef<HTMLDivElement>(null);
+  const loginButtonRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const menuModalRef = useRef<HTMLDivElement>(null);
 
   const handleClickOutside = useCallback(
     ({ target }: MouseEvent) => {
-      if (modalRef.current === null || loginRef.current === null) {
-        return;
+      if (
+        !loginModalRef.current!.contains(target as Node) &&
+        !loginButtonRef.current!.contains(target as Node)
+      ) {
+        setIsLoginModalOpen(false);
       }
 
       if (
-        !modalRef.current.contains(target as Node) &&
-        !loginRef.current.contains(target as Node)
+        !menuButtonRef.current!.contains(target as Node) &&
+        !menuModalRef.current!.contains(target as Node)
       ) {
-        setIsOpen(false);
+        setIsMenuOpen(false);
       }
     },
-    [setIsOpen],
+    [setIsLoginModalOpen],
   );
 
   useEffect(() => {
@@ -67,6 +93,15 @@ const Nav = () => {
   return (
     <>
       <header css={navContainer}>
+        <button
+          css={menuButton(isMenuOpen)}
+          ref={menuButtonRef}
+          onClick={() => {
+            setIsMenuOpen((prev) => !prev);
+          }}
+        >
+          <FontAwesomeIcon icon={isMenuOpen ? faXmark : faBars} />
+        </button>
         <div
           css={largeTitle}
           onClick={() => {
@@ -83,9 +118,9 @@ const Nav = () => {
             </>
           ) : (
             <div
-              ref={loginRef}
+              ref={loginButtonRef}
               onClick={() => {
-                setIsOpen(true);
+                setIsLoginModalOpen(true);
               }}
             >
               로그인
@@ -93,7 +128,8 @@ const Nav = () => {
           )}
         </div>
       </header>
-      <LoginModal isOpen={isOpen} modalRef={modalRef} />
+      <LoginModal isOpen={isLoginModalOpen} modalRef={loginModalRef} />
+      <MenuModal isOpen={isMenuOpen} modalRef={menuModalRef} />
     </>
   );
 };
