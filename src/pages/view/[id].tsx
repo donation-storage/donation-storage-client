@@ -38,7 +38,7 @@ export async function getServerSideProps(context: { params: { id: string } }) {
 
 const View = ({ data, tags }: Props) => (
   <div css={container}>
-    <Nav />
+    <Nav tags={tags} selectedTag={''} />
     <Search />
     <div css={mainContainer}>
       <section css={categorySection}>

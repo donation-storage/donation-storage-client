@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faFilter, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -7,8 +7,10 @@ import { useSelector } from 'react-redux';
 
 import type { RootState } from '../redux/reducers';
 import { flexCenter, largeTitle } from '../styles/common';
+import FilterModal from './FilterModal';
 import LoginModal from './LoginModal';
 import MenuModal from './MenuModal';
+import type { TagProps } from './TagComponent';
 
 const navContainer = css`
   position: sticky;
@@ -39,6 +41,18 @@ const menuButton = (isOpen: boolean) => css`
   }
 `;
 
+const filterButton = (isOpen: boolean) => css`
+  margin-left: auto;
+  width: 30px;
+  * {
+    color: #807f7f;
+    font-size: ${isOpen ? '23px' : '20px'};
+  }
+  @media (min-width: 1024px) {
+    display: none;
+  }
+`;
+
 const buttonBox = css`
   ${flexCenter}
   gap: 30px;
@@ -52,35 +66,54 @@ const buttonBox = css`
   }
 `;
 
-const Nav = () => {
+interface Props extends TagProps {
+  category?: 'video' | 'audio';
+}
+
+const Nav = ({ category, ...tagProps }: Props) => {
   const router = useRouter();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const { isLogin } = useSelector((state: RootState) => state.loginReducer);
 
   const loginModalRef = useRef<HTMLDivElement>(null);
-  const loginButtonRef = useRef<HTMLDivElement>(null);
-  const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const menuModalRef = useRef<HTMLDivElement>(null);
+  const loginButtonRef = useRef<Array<HTMLDivElement | HTMLLIElement | null>>(
+    [],
+  );
+  const sideBarButtonRef = useRef<Array<HTMLButtonElement | null>>([]);
+  const sideBarRef = useRef<Array<HTMLDivElement | null>>([]);
 
   const handleClickOutside = useCallback(
     ({ target }: MouseEvent) => {
       if (
         !loginModalRef.current!.contains(target as Node) &&
-        !loginButtonRef.current!.contains(target as Node)
+        !loginButtonRef.current.some((el) => el!.contains(target as Node))
       ) {
         setIsLoginModalOpen(false);
       }
 
       if (
-        !menuButtonRef.current!.contains(target as Node) &&
-        !menuModalRef.current!.contains(target as Node)
+        !sideBarButtonRef.current[0]!.contains(target as Node) &&
+        !sideBarRef.current[0]!.contains(target as Node)
       ) {
         setIsMenuOpen(false);
       }
+
+      if (
+        !sideBarButtonRef.current[1]!.contains(target as Node) &&
+        !sideBarRef.current[1]!.contains(target as Node)
+      ) {
+        setIsFilterOpen(false);
+      }
     },
-    [setIsLoginModalOpen],
+    [setIsLoginModalOpen, setIsMenuOpen, setIsFilterOpen],
   );
+
+  const openLoginModal = () => {
+    setIsLoginModalOpen(true);
+    setIsMenuOpen(false);
+  };
 
   useEffect(() => {
     window.addEventListener('click', handleClickOutside);
@@ -95,7 +128,7 @@ const Nav = () => {
       <header css={navContainer}>
         <button
           css={menuButton(isMenuOpen)}
-          ref={menuButtonRef}
+          ref={(el) => (sideBarButtonRef.current[0] = el)}
           onClick={() => {
             setIsMenuOpen((prev) => !prev);
           }}
@@ -118,7 +151,7 @@ const Nav = () => {
             </>
           ) : (
             <div
-              ref={loginButtonRef}
+              ref={(el) => (loginButtonRef.current[0] = el)}
               onClick={() => {
                 setIsLoginModalOpen(true);
               }}
@@ -127,9 +160,31 @@ const Nav = () => {
             </div>
           )}
         </div>
+        <button
+          css={filterButton(isFilterOpen)}
+          ref={(el) => (sideBarButtonRef.current[1] = el)}
+          onClick={() => {
+            setIsFilterOpen((prev) => !prev);
+          }}
+        >
+          <FontAwesomeIcon icon={isFilterOpen ? faXmark : faFilter} />
+        </button>
       </header>
       <LoginModal isOpen={isLoginModalOpen} modalRef={loginModalRef} />
-      <MenuModal isOpen={isMenuOpen} modalRef={menuModalRef} />
+      <MenuModal
+        loginButtonRef={loginButtonRef}
+        isOpen={isMenuOpen}
+        modalRef={sideBarRef}
+        openLoginModal={() => {
+          openLoginModal();
+        }}
+      />
+      <FilterModal
+        isOpen={isFilterOpen}
+        modalRef={sideBarRef}
+        {...tagProps}
+        category={category}
+      />
     </>
   );
 };

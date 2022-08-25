@@ -2,9 +2,10 @@ import { css } from '@emotion/react';
 import { useRouter } from 'next/router';
 
 import { fontPyeongChangLight, primaryColor } from '../styles/common';
+import type { CategoryConfig } from '../types/common';
 
 interface Props {
-  category?: 'all' | 'video' | 'audio';
+  category?: CategoryConfig;
 }
 
 const categoryContainer = css`

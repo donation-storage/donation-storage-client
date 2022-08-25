@@ -37,9 +37,9 @@ const modalContainer = css`
   max-width: 350px;
   max-height: 400px;
   @media (max-width: 1023px) {
-    border-radius: 0;
-    max-width: 100%;
-    max-height: 100%;
+    border-radius: 7px;
+    max-width: none;
+    width: 95%;
   }
 `;
 

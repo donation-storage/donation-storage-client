@@ -19,18 +19,28 @@ const tagStyle = (isSelected: boolean) => css`
   padding: 0 10px;
   border-radius: 50px;
   height: 30px;
-  background-color: ${isSelected ? primaryColor : '#d1d1d1'};
-  color: ${isSelected ? '#fff' : '#000'};
+  max-width: 95%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background-color: ${isSelected ? primaryColor : '#dfdfdf'};
+  color: ${isSelected ? '#fff' : '#4d4d4d'};
   font-weight: ${isSelected ? 900 : 'normal'};
+  border: 1px solid ${isSelected ? primaryColor : '#7f7f7f'};
   cursor: pointer;
+  @media (max-width: 1023px) {
+    height: 23px;
+    padding: 0 7px;
+    font-size: 14px;
+  }
 `;
 
-interface Props {
+export interface TagProps {
   selectedTag: string;
   tags: string[];
 }
 
-const TagComponent = ({ selectedTag, tags }: Props) => {
+const TagComponent = ({ selectedTag, tags }: TagProps) => {
   const router = useRouter();
 
   return (

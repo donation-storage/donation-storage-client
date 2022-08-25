@@ -68,19 +68,28 @@ const subMenuStyle = (isSelected: boolean) => css`
 
 interface Props {
   isOpen: boolean;
-  modalRef: React.RefObject<HTMLDivElement>;
+  modalRef: React.MutableRefObject<Array<HTMLDivElement | null>>;
+  loginButtonRef: React.MutableRefObject<
+    Array<HTMLDivElement | HTMLLIElement | null>
+  >;
+  openLoginModal: () => void;
 }
 
-const MenuModal = ({ isOpen, modalRef }: Props) => {
+const MenuModal = ({
+  isOpen,
+  modalRef,
+  openLoginModal,
+  loginButtonRef,
+}: Props) => {
   const { isLogin } = useSelector((state: RootState) => state.loginReducer);
   const router = useRouter();
   const path = router.pathname;
   const [isMyPageOpen, setIsMyPageOpen] = useState(false);
 
   return (
-    <div css={container(isOpen)} ref={modalRef}>
+    <div css={container(isOpen)} ref={(el) => (modalRef.current[0] = el)}>
       <ul css={menuBox}>
-        {!isLogin ? (
+        {isLogin ? (
           <>
             <li
               css={mypageStyle}
@@ -108,7 +117,14 @@ const MenuModal = ({ isOpen, modalRef }: Props) => {
             <li>로그아웃</li>
           </>
         ) : (
-          <li>로그인</li>
+          <li
+            ref={(el) => (loginButtonRef.current[1] = el)}
+            onClick={() => {
+              openLoginModal();
+            }}
+          >
+            로그인
+          </li>
         )}
       </ul>
     </div>

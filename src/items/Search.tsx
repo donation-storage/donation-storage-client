@@ -15,8 +15,6 @@ const searchContainer = css`
   width: 70%;
   max-width: 600px;
   margin: 30px auto;
-  display: flex;
-  align-items: center;
   @media (max-width: 1023px) {
     width: 90%;
     margin: 15px auto;
