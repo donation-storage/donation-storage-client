@@ -15,6 +15,10 @@ const searchContainer = css`
   width: 70%;
   max-width: 600px;
   margin: 30px auto;
+  @media (max-width: 1023px) {
+    width: 90%;
+    margin: 15px auto;
+  }
 `;
 
 const searchBox = css`

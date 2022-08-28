@@ -37,9 +37,9 @@ const modalContainer = css`
   max-width: 350px;
   max-height: 400px;
   @media (max-width: 1023px) {
-    border-radius: 0;
-    max-width: 100%;
-    max-height: 100%;
+    border-radius: 7px;
+    max-width: none;
+    width: 95%;
   }
 `;
 
@@ -60,24 +60,29 @@ const loginButton = (color: string, logoWidth: string, left: string) => css`
   width: 90%;
   height: 45px;
   margin: 5px 0;
-  position: relative;
-  align-items: center;
-  justify-content: center;
-  background-color: #fff;
-  border-radius: 5px;
-  border: 1.2px solid ${color};
-  > img {
-    width: ${logoWidth};
-    position: absolute;
-    top: 50%;
-    left: ${left};
-    transform: translateY(-50%);
-    border-radius: 3px;
-  }
-  > span {
-    color: ${color};
-    font-size: 14px;
-    font-weight: 800;
+  > button {
+    display: flex;
+    width: 100%;
+    height: 45px;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1.2px solid ${color};
+    > img {
+      width: ${logoWidth};
+      position: absolute;
+      top: 50%;
+      left: ${left};
+      transform: translateY(-50%);
+      border-radius: 3px;
+    }
+    > span {
+      color: ${color};
+      font-size: 14px;
+      font-weight: 800;
+    }
   }
 `;
 
@@ -90,18 +95,33 @@ const LoginModal = ({ isOpen, modalRef }: Props) => {
     <div css={background(isOpen)}>
       <div ref={modalRef} css={modalContainer}>
         <div css={loginTitle}>로그인</div>
-        <button css={loginButton('#64449f', '26px', '15px')}>
-          <img src="/images/icon-twitch.png" alt="twitch" />
-          <span>트위치 로그인</span>
-        </button>
-        <button css={loginButton('#00bf18', '25px', '15px')}>
-          <img src="/images/icon-naver.png" alt="naver" />
-          <span>네이버 로그인</span>
-        </button>
-        <button css={loginButton('#a0a0a0', '28px', '12.5px')}>
-          <img src="/images/icon-google.png" alt="google" />
-          <span>구글 로그인</span>
-        </button>
+        <a
+          href="https://server.donationstorage.net/oauth2/authorization/twitch"
+          css={loginButton('#64449f', '26px', '15px')}
+        >
+          <button>
+            <img src="/images/icon-twitch.png" alt="twitch" />
+            <span>트위치 로그인</span>
+          </button>
+        </a>
+        <a
+          href="https://server.donationstorage.net/oauth2/authorization/naver"
+          css={loginButton('#00bf18', '25px', '15px')}
+        >
+          <button>
+            <img src="/images/icon-naver.png" alt="naver" />
+            <span>네이버 로그인</span>
+          </button>
+        </a>
+        <a
+          href="https://server.donationstorage.net/oauth2/authorization/google"
+          css={loginButton('#a0a0a0', '28px', '12.5px')}
+        >
+          <button>
+            <img src="/images/icon-google.png" alt="google" />
+            <span>구글 로그인</span>
+          </button>
+        </a>
       </div>
     </div>
   );

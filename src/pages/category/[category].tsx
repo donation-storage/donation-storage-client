@@ -46,7 +46,7 @@ export async function getServerSideProps(context: {
 
 const Home: NextPage<Props> = ({ category, tags, list, page }) => (
   <div css={container}>
-    <Nav />
+    <Nav tags={tags} selectedTag={''} category={category} />
     <Search />
     <div css={mainContainer}>
       <section css={categorySection}>

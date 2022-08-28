@@ -66,4 +66,4 @@ jobs:
           aws-region: "ap-northeast-2"
           aws-access-key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          pipeline-name: "donation-storage-pipeline"
+          pipeline-name: "pipeline-donation-storage-client"

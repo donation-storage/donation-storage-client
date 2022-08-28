@@ -52,16 +52,25 @@ export const mainContainer = css`
 export const categorySection = css`
   flex: 1;
   height: 100%;
+  @media (max-width: 1023px) {
+    display: none;
+  }
 `;
 
 export const listSection = css`
   max-width: 900px;
   width: 100%;
   flex: 2;
+  @media (max-width: 1023px) {
+    max-width: 1023px;
+  }
 `;
 
 export const tagSection = css`
   flex: 1;
+  @media (max-width: 1023px) {
+    display: none;
+  }
 `;
 
 export const relative = css`
