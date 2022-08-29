@@ -6,11 +6,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import type { RootState } from '../redux/reducers';
-import { flexCenter, largeTitle } from '../styles/common';
+import { displayNone, flexCenter, largeTitle } from '../styles/common';
 import FilterModal from './FilterModal';
 import LoginModal from './LoginModal';
 import MenuModal from './MenuModal';
-import type { TagProps } from './TagComponent';
 
 const navContainer = css`
   position: sticky;
@@ -18,6 +17,7 @@ const navContainer = css`
   left: 0;
   width: 100%;
   height: 60px;
+  min-height: 60px;
   padding: 0 60px;
   background-color: #fff;
   z-index: 9998;
@@ -41,13 +41,14 @@ const menuButton = (isOpen: boolean) => css`
   }
 `;
 
-const filterButton = (isOpen: boolean) => css`
+const filterButton = (isOpen: boolean, isVisible: boolean) => css`
   margin-left: auto;
   width: 30px;
   * {
     color: #807f7f;
     font-size: ${isOpen ? '23px' : '20px'};
   }
+  ${!isVisible && displayNone}
   @media (min-width: 1024px) {
     display: none;
   }
@@ -66,8 +67,10 @@ const buttonBox = css`
   }
 `;
 
-interface Props extends TagProps {
+interface Props {
   category?: 'video' | 'audio';
+  selectedTag?: string;
+  tags?: string[];
 }
 
 const Nav = ({ category, ...tagProps }: Props) => {
@@ -161,7 +164,7 @@ const Nav = ({ category, ...tagProps }: Props) => {
           )}
         </div>
         <button
-          css={filterButton(isFilterOpen)}
+          css={filterButton(isFilterOpen, !router.asPath.includes('/mypage'))}
           ref={(el) => (sideBarButtonRef.current[1] = el)}
           onClick={() => {
             setIsFilterOpen((prev) => !prev);
@@ -182,7 +185,8 @@ const Nav = ({ category, ...tagProps }: Props) => {
       <FilterModal
         isOpen={isFilterOpen}
         modalRef={sideBarRef}
-        {...tagProps}
+        tags={tagProps.tags || []}
+        selectedTag={tagProps.selectedTag || ''}
         category={category}
       />
     </>

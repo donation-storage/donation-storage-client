@@ -46,6 +46,7 @@ const Switch = ({ isChecked, handleToogle }: Props) => (
       onChange={handleToogle}
       id="switch-input"
       css={checkboxInput}
+      value="toggle"
     />
     <label htmlFor="switch-input" css={switchLabel}>
       <div css={ball} />

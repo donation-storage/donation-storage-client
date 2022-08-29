@@ -16,6 +16,9 @@ const container = css`
   margin: 60px auto 0 auto;
   max-width: 800px;
   width: 90%;
+  @media (max-width: 850px) {
+    margin-top: 20px;
+  }
 `;
 
 const titleBox = css`
@@ -32,6 +35,14 @@ const titleBox = css`
     color: #666666;
   }
   margin-bottom: 25px;
+  @media (max-width: 850px) {
+    > h1 {
+      font-size: 20px;
+    }
+    > h2 {
+      font-size: 14px;
+    }
+  }
 `;
 
 const listBox = css`

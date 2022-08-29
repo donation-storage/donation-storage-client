@@ -20,6 +20,9 @@ const container = (isOpen: boolean) => css`
   box-shadow: 0px -1px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 220px;
+  @media (min-width: 1024px) {
+    display: none;
+  }
 `;
 
 const menuBox = css`

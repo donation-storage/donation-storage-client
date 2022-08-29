@@ -34,6 +34,9 @@ const inputBox = css`
       color: #919191;
     }
   }
+  @media (max-width: 850px) {
+    max-width: none;
+  }
 `;
 
 interface Props {
