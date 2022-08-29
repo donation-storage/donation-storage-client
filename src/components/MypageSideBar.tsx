@@ -3,16 +3,21 @@ import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 
+import { useMatchMedia } from '../hooks/useMatchMedia';
 import {
   fontNanumSquare,
   fontPyeongChangBold,
   primaryColor,
 } from '../styles/common';
+import Nav from './Nav';
 
 const container = css`
   width: 100%;
   height: 100vh;
   display: flex;
+  @media (max-width: 850px) {
+    flex-direction: column;
+  }
 `;
 
 const menuSection = css`
@@ -21,6 +26,9 @@ const menuSection = css`
   background-color: #fefdff;
   box-shadow: 0px -1px 6px rgba(0, 0, 0, 0.075);
   z-index: 1;
+  @media (max-width: 850px) {
+    display: none;
+  }
 `;
 
 const logoBox = css`
@@ -100,9 +108,11 @@ interface Props {
 
 const MyPageSideBar: React.FC<Props> = ({ children, path }) => {
   const router = useRouter();
+  const isMobile = useMatchMedia(850);
 
   return (
     <div css={container}>
+      {isMobile && <Nav />}
       <section css={menuSection}>
         <div css={logoBox}>
           <button
