@@ -97,6 +97,7 @@ const tagTooltip = (isVisible: boolean) => css`
   width: 280px;
   padding: 10px;
   animation: ${fadeInDown} 0.4s;
+  max-width: 95%;
 `;
 
 const toggleBox = css`

@@ -32,6 +32,7 @@ const fileUpload = css`
   display: flex;
   justify-content: center;
   align-items: center;
+  min-width: 100px;
 `;
 
 const fileName = css`
@@ -58,6 +59,7 @@ const UploadAudio = ({ file, setFile }: Props) => (
         }}
         id="file-audio"
         css={fileInput}
+        value=""
       />
       <label htmlFor="file-audio" css={fileUpload}>
         파일 업로드
