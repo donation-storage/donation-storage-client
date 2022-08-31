@@ -20,10 +20,11 @@ const noneEmbedBox = css`
 
 interface Props {
   videoUrl: string;
+  width: number;
   startTime?: number;
 }
 
-const VideoEmbed = ({ videoUrl, startTime }: Props) => {
+const VideoEmbed = ({ videoUrl, startTime, width }: Props) => {
   const [embedConfig, setEmbedConfig] = useState({ status: '', id: '' });
 
   const handleEmbedConfig = useCallback(() => {
@@ -82,8 +83,8 @@ const VideoEmbed = ({ videoUrl, startTime }: Props) => {
     return (
       <iframe
         src={`https://player.twitch.tv/?video=${embedConfig.id}&parent=${process.env.NEXT_PUBLIC_CLINET_DOMAIN}&autoplay=false&time=${startTime}s`}
-        height="360"
-        width="640"
+        height={String((width * 360) / 640)}
+        width={String(width)}
         allowFullScreen={true}
       ></iframe>
     );
@@ -96,8 +97,8 @@ const VideoEmbed = ({ videoUrl, startTime }: Props) => {
         frameBorder="0"
         allowFullScreen={true}
         scrolling="no"
-        height="360"
-        width="640"
+        height={String((width * 360) / 640)}
+        width={String(width)}
       ></iframe>
     );
   }
@@ -105,8 +106,8 @@ const VideoEmbed = ({ videoUrl, startTime }: Props) => {
   if (embedConfig.status === 'youtube/video') {
     return (
       <iframe
-        width="640"
-        height="360"
+        height={String((width * 360) / 640)}
+        width={String(width)}
         src={`https://www.youtube.com/embed/${embedConfig.id}?origin=${process.env.NEXT_PUBLIC_CLINET_URL}&start=${startTime}`}
         frameBorder="0"
       ></iframe>
