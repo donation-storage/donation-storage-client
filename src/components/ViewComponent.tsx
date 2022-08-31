@@ -9,7 +9,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Dialog from '../items/Dialog';
 import VideoEmbed from '../items/VideoEmbed';
@@ -132,6 +132,11 @@ const videoInfoBox = css`
   align-items: center;
   gap: 10px;
   margin-bottom: 20px;
+  > div {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
   h3 {
     background-color: #f0f0f0;
     color: #505050;
@@ -150,6 +155,10 @@ const videoInfoBox = css`
       border-radius: 4px;
       transition: 0.6s;
     }
+  }
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: flex-start;
   }
 `;
 
@@ -180,6 +189,16 @@ const ViewComponent = (props: { data: VideoConfig | AudioConfig }) => {
   const [hour, minute, second] = formatStartTime(startTime);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const router = useRouter();
+  const embedRef = useRef<HTMLDivElement>(null);
+  const [embedWidth, setEmbedWidth] = useState(640);
+
+  useEffect(() => {
+    if (embedRef.current) {
+      setEmbedWidth(
+        embedRef.current.offsetWidth > 640 ? 640 : embedRef.current.offsetWidth,
+      );
+    }
+  }, [embedRef]);
 
   const download = async () => {
     const blob = await srcToFile(file, file.split('/').reverse()[0]);
@@ -255,11 +274,15 @@ const ViewComponent = (props: { data: VideoConfig | AudioConfig }) => {
           ) : (
             <div css={videoBox}>
               <div css={videoInfoBox}>
-                <h3>URL</h3>
-                <div>{url}</div>
-                <h3>시작시간</h3>
                 <div>
-                  {hour} : {minute} : {second}
+                  <h3>URL</h3>
+                  <div>{url}</div>
+                </div>
+                <div>
+                  <h3>시작시간</h3>
+                  <div>
+                    {hour} : {minute} : {second}
+                  </div>
                 </div>
                 <button
                   onClick={() => {
@@ -269,7 +292,13 @@ const ViewComponent = (props: { data: VideoConfig | AudioConfig }) => {
                   URL 복사
                 </button>
               </div>
-              <VideoEmbed videoUrl={url} startTime={startTime} />
+              <div ref={embedRef}>
+                <VideoEmbed
+                  videoUrl={url}
+                  startTime={startTime}
+                  width={embedWidth}
+                />
+              </div>
             </div>
           )}
         </div>
