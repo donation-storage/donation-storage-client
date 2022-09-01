@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
 
-import { fontNanumSquare } from '../styles/common';
+import { fontNanumSquare, hidden } from '../styles/common';
 
 const fadeIn = css`
   transition: opacity 0.4s ease;
@@ -28,7 +28,7 @@ const container = (isOpen: boolean, isVisable: boolean) => css`
   align-items: center;
   justify-content: center;
   ${isOpen ? fadeIn : fadeOut}
-  ${!isVisable && 'visibility: hidden;'}
+  ${!isVisable && hidden}
 `;
 
 const Dialog = (props: { message: string; isOpen: boolean }) => {
