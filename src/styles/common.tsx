@@ -76,3 +76,11 @@ export const tagSection = css`
 export const relative = css`
   position: relative;
 `;
+
+export const hidden = css`
+  visibility: hidden;
+`;
+
+export const background = (bgStyle: string) => css`
+  background: ${bgStyle};
+`;

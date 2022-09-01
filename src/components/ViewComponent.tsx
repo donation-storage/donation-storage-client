@@ -3,7 +3,6 @@ import { css } from '@emotion/react';
 // import { faHeart as faHeartNone } from '@fortawesome/free-regular-svg-icons';
 import {
   faArrowLeft,
-  faEllipsisV,
   faHeart,
   faShareFromSquare,
 } from '@fortawesome/free-solid-svg-icons';
@@ -11,6 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 
+import Confirm from '../items/Confirm';
 import Dialog from '../items/Dialog';
 import VideoEmbed from '../items/VideoEmbed';
 import {
@@ -21,6 +21,7 @@ import {
 import type { AudioConfig, VideoConfig } from '../types/api';
 import { isAudioConfig } from '../types/api';
 import { formatStartTime, srcToFile } from '../utills/common';
+import { logger } from '../utills/logger';
 
 const container = css`
   display: flex;
@@ -104,6 +105,21 @@ const videoBox = css`
 
 const audio = css`
   margin: 0 auto;
+`;
+
+const writerBox = css`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 14px;
+  > button {
+    color: #8b8b8b;
+    font-weight: 700;
+    &:hover {
+      color: #303030;
+    }
+  }
 `;
 
 const fileInfo = css`
@@ -191,6 +207,7 @@ const ViewComponent = (props: { data: VideoConfig | AudioConfig }) => {
   const router = useRouter();
   const embedRef = useRef<HTMLDivElement>(null);
   const [embedWidth, setEmbedWidth] = useState(640);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (embedRef.current) {
@@ -252,9 +269,16 @@ const ViewComponent = (props: { data: VideoConfig | AudioConfig }) => {
             <div>{writer}</div>
             <div>{createdAt}</div>
           </div>
-          <button>
-            <FontAwesomeIcon icon={faEllipsisV} />
-          </button>
+          <div css={writerBox}>
+            <button>수정</button>
+            <button
+              onClick={() => {
+                setIsModalOpen(true);
+              }}
+            >
+              삭제
+            </button>
+          </div>
         </div>
         <div css={contentBox}>
           {isAudioConfig(props.data) ? (
@@ -313,6 +337,19 @@ const ViewComponent = (props: { data: VideoConfig | AudioConfig }) => {
         </div>
       </div>
       <Dialog message="복사되었습니다." isOpen={isDialogOpen} />
+      <Confirm
+        title={'게시물 삭제'}
+        content={'삭제하시겠습니까?'}
+        cancelText={'취소'}
+        confirmText={'삭제'}
+        isOpen={isModalOpen}
+        onConfirm={() => {
+          logger.log('삭제');
+        }}
+        onCancel={() => {
+          setIsModalOpen(false);
+        }}
+      />
     </>
   );
 };
