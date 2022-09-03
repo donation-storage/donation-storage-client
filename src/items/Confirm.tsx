@@ -55,7 +55,7 @@ const modalContainer = (isOpen: boolean, isVisible: boolean) => css`
   background-color: #ffffff;
   gap: 35px;
   ${!isVisible && hidden}
-  animation: ${isOpen ? fadeInUp : fadeOutDown} 0.3s ease-in-out;
+  animation: ${isOpen ? fadeInUp : fadeOutDown} 0.4s ease-in-out;
   box-shadow: rgb(0 0 0 / 9%) 0px 2px 12px 0px;
 `;
 
