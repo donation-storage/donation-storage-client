@@ -64,7 +64,7 @@ const UploadAudio = ({ file, setFile }: Props) => (
       <label htmlFor="file-audio" css={fileUpload}>
         파일 업로드
       </label>
-      <input value={file?.name || ''} css={fileName} />
+      <div css={fileName}>{file?.name || ''}</div>
     </div>
     <div css={audioplayerBox}>
       <audio src={file ? URL.createObjectURL(file) : ''} controls />
