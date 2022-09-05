@@ -95,7 +95,7 @@ const MenuModal = ({
 
   const onLogout = () => {
     dispatch(logout() as unknown as AnyAction);
-    deleteCookie('accessToken');
+    deleteCookie('accessToken', { path: '/', domain: '.donationstorage.net' });
     window.location.reload();
   };
 

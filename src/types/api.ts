@@ -33,3 +33,11 @@ export interface UserAuth {
   userSeq: number;
   userName: string;
 }
+
+export interface PostRequestConfig {
+  keyword?: string;
+  tag?: string;
+  userId?: string;
+  start?: number;
+  length?: number;
+}
