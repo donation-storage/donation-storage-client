@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { faBars, faFilter, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { deleteCookie } from 'cookies-next';
+import { setCookie } from 'cookies-next';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -124,7 +124,7 @@ const Nav = ({ category, ...tagProps }: Props) => {
 
   const onLogout = () => {
     dispatch(logout() as unknown as AnyAction);
-    deleteCookie('accessToken', { path: '/', domain: '.donationstorage.net' });
+    setCookie('accessToken', '', { maxAge: 0 });
     window.location.reload();
   };
 
