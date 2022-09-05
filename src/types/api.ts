@@ -30,6 +30,6 @@ export const isAudioConfig = (
 ): config is AudioConfig => config.type === 'audio';
 
 export interface UserAuth {
-  resultCode: number;
-  resultData: string;
+  userSeq: number;
+  userName: string;
 }

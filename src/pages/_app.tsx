@@ -35,11 +35,11 @@ function MyApp({ Component, pageProps }: AppProps) {
     try {
       const data = await getUserInfoApi();
 
-      if (data.resultCode) {
+      if (data.userName) {
         dispatch(
           login({
             isLogin: true,
-            userName: data.resultData,
+            userName: data.userName,
           }) as unknown as AnyAction,
         );
       }

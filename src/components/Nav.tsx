@@ -1,10 +1,13 @@
 import { css } from '@emotion/react';
 import { faBars, faFilter, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { deleteCookie } from 'cookies-next';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AnyAction } from 'redux';
 
+import { logout } from '../redux/actions';
 import type { RootState } from '../redux/reducers';
 import { displayNone, flexCenter, largeTitle } from '../styles/common';
 import FilterModal from './FilterModal';
@@ -86,6 +89,7 @@ const Nav = ({ category, ...tagProps }: Props) => {
   );
   const sideBarButtonRef = useRef<Array<HTMLButtonElement | null>>([]);
   const sideBarRef = useRef<Array<HTMLDivElement | null>>([]);
+  const dispatch = useDispatch();
 
   const handleClickOutside = useCallback(
     ({ target }: MouseEvent) => {
@@ -116,6 +120,12 @@ const Nav = ({ category, ...tagProps }: Props) => {
   const openLoginModal = () => {
     setIsLoginModalOpen(true);
     setIsMenuOpen(false);
+  };
+
+  const onLogout = () => {
+    dispatch(logout() as unknown as AnyAction);
+    deleteCookie('accessToken');
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -149,8 +159,20 @@ const Nav = ({ category, ...tagProps }: Props) => {
         <div css={buttonBox}>
           {isLogin ? (
             <>
-              <div>마이페이지</div>
-              <div>로그아웃</div>
+              <div
+                onClick={() => {
+                  void router.push('/mypage/post');
+                }}
+              >
+                마이페이지
+              </div>
+              <div
+                onClick={() => {
+                  onLogout();
+                }}
+              >
+                로그아웃
+              </div>
             </>
           ) : (
             <div
