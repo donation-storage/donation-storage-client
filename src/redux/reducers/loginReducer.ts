@@ -5,8 +5,6 @@ import { LOGIN, LOGOUT } from '../actions';
 
 const initialState: LoginState = {
   isLogin: false,
-  oauth: '',
-  id: '',
   userName: '',
 };
 

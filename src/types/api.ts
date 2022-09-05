@@ -28,3 +28,8 @@ export interface AudioConfig {
 export const isAudioConfig = (
   config: AudioConfig | VideoConfig,
 ): config is AudioConfig => config.type === 'audio';
+
+export interface UserAuth {
+  resultCode: number;
+  resultData: string;
+}

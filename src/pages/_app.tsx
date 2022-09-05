@@ -8,12 +8,16 @@ config.autoAddCss = false;
 
 import { Global } from '@emotion/react';
 import type { AppProps } from 'next/app';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import { useDispatch } from 'react-redux';
+import type { AnyAction } from 'redux';
 
+import { getUserInfoApi } from '../apis/user';
 import Head from '../items/Head';
 import initMockAPI from '../mocks';
+import { login } from '../redux/actions';
 import { wrapper } from '../redux/store';
 import { globalStyles } from '../styles/reset';
 import { logger } from '../utills/logger';
@@ -25,6 +29,28 @@ if (process.env.NEXT_PUBLIC_USE_API_MOCKING === 'true') {
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(() => new QueryClient());
+  const dispatch = useDispatch();
+
+  const getUserInfo = useCallback(async () => {
+    try {
+      const data = await getUserInfoApi();
+
+      if (data.resultCode) {
+        dispatch(
+          login({
+            isLogin: true,
+            userName: data.resultData,
+          }) as unknown as AnyAction,
+        );
+      }
+    } catch (error) {
+      logger.log(error);
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    void getUserInfo();
+  }, [getUserInfo]);
 
   return (
     <QueryClientProvider client={queryClient}>
