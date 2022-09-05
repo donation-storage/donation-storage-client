@@ -126,6 +126,13 @@ const likeBox = css`
   cursor: pointer;
 `;
 
+const noData = css`
+  display: flex;
+  align-items: center;
+  height: 150px;
+  color: #575757;
+`;
+
 interface Props {
   page: number;
   data: Array<AudioConfig | VideoConfig>;
@@ -244,12 +251,16 @@ const ListComponent = ({ data, page }: Props) => {
         </button>
       </div>
       <div css={listBox}>
-        {data.map((record, index) =>
-          record.type === 'audio' ? (
-            <AudioRecord config={record} key={index} />
-          ) : (
-            <VideoRecord config={record} key={index} />
-          ),
+        {data.length > 0 ? (
+          data.map((record, index) =>
+            record.type === 'audio' ? (
+              <AudioRecord config={record} key={index} />
+            ) : (
+              <VideoRecord config={record} key={index} />
+            ),
+          )
+        ) : (
+          <div css={noData}>해당하는 게시물이 없습니다.</div>
         )}
       </div>
       <Paginate page={page} count={100} setPage={setPage} />
