@@ -1,10 +1,13 @@
 import { css } from '@emotion/react';
 import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { deleteCookie } from 'cookies-next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AnyAction } from 'redux';
 
+import { logout } from '../redux/actions';
 import type { RootState } from '../redux/reducers';
 import { fontNanumSquare, primaryColor } from '../styles/common';
 
@@ -88,6 +91,13 @@ const MenuModal = ({
   const router = useRouter();
   const path = router.pathname;
   const [isMyPageOpen, setIsMyPageOpen] = useState(false);
+  const dispatch = useDispatch();
+
+  const onLogout = () => {
+    dispatch(logout() as unknown as AnyAction);
+    deleteCookie('accessToken');
+    window.location.reload();
+  };
 
   return (
     <div css={container(isOpen)} ref={(el) => (modalRef.current[0] = el)}>
@@ -117,7 +127,13 @@ const MenuModal = ({
                 좋아요한 글
               </li>
             </ul>
-            <li>로그아웃</li>
+            <li
+              onClick={() => {
+                onLogout();
+              }}
+            >
+              로그아웃
+            </li>
           </>
         ) : (
           <li
