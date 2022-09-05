@@ -244,11 +244,11 @@ const ListComponent = ({ data, page }: Props) => {
         </button>
       </div>
       <div css={listBox}>
-        {data.map((record) =>
+        {data.map((record, index) =>
           record.type === 'audio' ? (
-            <AudioRecord config={record} />
+            <AudioRecord config={record} key={index} />
           ) : (
-            <VideoRecord config={record} />
+            <VideoRecord config={record} key={index} />
           ),
         )}
       </div>
