@@ -41,3 +41,33 @@ export interface PostRequestConfig {
   start?: number;
   length?: number;
 }
+
+export interface PostConfig {
+  postSeq: number;
+  postName: string;
+  link: string;
+  type: string;
+  like: number;
+  insertTime: string;
+  insertUserId: string;
+  startTime: string;
+  tag: string[];
+}
+export interface PostResponseConfig {
+  code: number;
+  message: string;
+  data: {
+    startPage: number;
+    pages: number;
+    data: PostConfig[];
+    pageGroupCount: number;
+    count: number;
+    endPage: number;
+  };
+}
+
+export interface ViewRequestConfig {
+  code: number;
+  message: string;
+  data: PostConfig;
+}

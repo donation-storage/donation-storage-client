@@ -1,6 +1,6 @@
-import axios from 'axios';
 import type { NextPage } from 'next';
 
+import { getServerSidePropsForPage } from '../apis/ssr';
 import Category from '../components/Category';
 import ListComponent from '../components/ListComponent';
 import Nav from '../components/Nav';
@@ -13,35 +13,17 @@ import {
   mainContainer,
   tagSection,
 } from '../styles/common';
-import type { AudioConfig, VideoConfig } from '../types/api';
-
-interface Props {
-  tags: string[];
-  list: Array<AudioConfig | VideoConfig>;
-  page: number;
-}
+import type { PageProps } from '../types/common';
 
 export async function getServerSideProps(context: {
   query: { page?: string };
 }) {
-  const endpoints = [
-    `${process.env.NEXT_PUBLIC_SERVER_API}/tag`,
-    `${process.env.NEXT_PUBLIC_SERVER_API}/list`,
-  ];
-  const [tagResponse, listResponse] = await axios.all(
-    endpoints.map((endpoint) => axios.get(endpoint)),
-  );
+  const start = context.query.page ? Number(context.query.page) : 1;
 
-  return {
-    props: {
-      page: context.query.page ? Number(context.query.page) : 1,
-      tags: tagResponse.data.data,
-      list: listResponse.data.data,
-    },
-  };
+  return getServerSidePropsForPage({ start });
 }
 
-const Home: NextPage<Props> = ({ tags, list, page }) => (
+const Home: NextPage<PageProps> = ({ tags, list, page }) => (
   <div css={container}>
     <Nav tags={tags} selectedTag={''} />
     <Search />

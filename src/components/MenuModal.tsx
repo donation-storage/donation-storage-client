@@ -1,7 +1,7 @@
+/* eslint-disable unicorn/no-document-cookie */
 import { css } from '@emotion/react';
 import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { setCookie } from 'cookies-next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -95,7 +95,7 @@ const MenuModal = ({
 
   const onLogout = () => {
     dispatch(logout() as unknown as AnyAction);
-    setCookie('accessToken', '', { maxAge: 0 });
+    document.cookie = 'accessToken=; Max-Age=0; path=/;';
     window.location.reload();
   };
 
