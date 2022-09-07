@@ -12,3 +12,9 @@ export const getUserInfoApi = async () => {
 
   return response.data;
 };
+
+export const logoutApi = async () => {
+  await axios.get('https://server.donationstorage.net/user/logout', {
+    withCredentials: true,
+  });
+};

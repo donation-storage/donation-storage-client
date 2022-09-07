@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AnyAction } from 'redux';
 
+import { logoutApi } from '../apis/user';
 import { logout } from '../redux/actions';
 import type { RootState } from '../redux/reducers';
 import { displayNone, flexCenter, largeTitle } from '../styles/common';
@@ -124,7 +125,7 @@ const Nav = ({ category, ...tagProps }: Props) => {
 
   const onLogout = () => {
     dispatch(logout() as unknown as AnyAction);
-    document.cookie = 'accessToken=; Max-Age=0; path=/;';
+    void logoutApi();
     window.location.reload();
   };
 
