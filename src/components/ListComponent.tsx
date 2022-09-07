@@ -11,7 +11,8 @@ import {
   fontPyeongChangLight,
   primaryColor,
 } from '../styles/common';
-import type { AudioConfig, VideoConfig } from '../types/api';
+import type { PostConfig } from '../types/api';
+import type { PageConfig } from '../types/common';
 import { isYoutueUrl } from '../utills/common';
 import { logger } from '../utills/logger';
 
@@ -134,11 +135,11 @@ const noData = css`
 `;
 
 interface Props {
-  page: number;
-  data: Array<AudioConfig | VideoConfig>;
+  page: PageConfig;
+  data: PostConfig[];
 }
 
-const AudioRecord = ({ config }: { config: AudioConfig }) => {
+const AudioRecord = ({ config }: { config: PostConfig }) => {
   const router = useRouter();
 
   return (
@@ -149,24 +150,24 @@ const AudioRecord = ({ config }: { config: AudioConfig }) => {
           <h1
             css={postNameStyle}
             onClick={() => {
-              void router.push(`/view/${config.id}`);
+              void router.push(`/view/${config.postSeq}`);
             }}
           >
             {config.postName}
-          </h1>{' '}
+          </h1>
         </div>
         <div css={flexRow}>
           <span css={subInfoStyle}>[01:26]</span>
-          <span css={subInfoStyle}>{config.createdAt}</span>
+          <span css={subInfoStyle}>{config.insertTime.slice(0, 10)}</span>
         </div>
       </div>
       <div css={tagBox}>
-        {config.tags.map((tag, id) => (
-          <span key={id}>#{tag.tagName}</span>
+        {config.tag.map((tag, id) => (
+          <span key={id}>#{tag}</span>
         ))}
       </div>
       <div css={recordBox}>
-        <span css={writerStyle}>{config.writer}</span>
+        <span css={writerStyle}>{config.insertUserId}</span>
         <span css={likeBox}>
           <FontAwesomeIcon
             icon={faHeart}
@@ -181,8 +182,8 @@ const AudioRecord = ({ config }: { config: AudioConfig }) => {
   );
 };
 
-const VideoRecord = ({ config }: { config: VideoConfig }) => {
-  const isYoutube = isYoutueUrl(config.url);
+const VideoRecord = ({ config }: { config: PostConfig }) => {
+  const isYoutube = isYoutueUrl(config.link);
   const router = useRouter();
 
   return (
@@ -196,7 +197,7 @@ const VideoRecord = ({ config }: { config: VideoConfig }) => {
           <h1
             css={postNameStyle}
             onClick={() => {
-              void router.push(`/view/${config.id}`);
+              void router.push(`/view/${config.postSeq}`);
             }}
           >
             {config.postName}
@@ -204,16 +205,16 @@ const VideoRecord = ({ config }: { config: VideoConfig }) => {
         </div>
         <div css={flexRow}>
           <span css={subInfoStyle}>영상제목</span>
-          <span css={subInfoStyle}>{config.createdAt}</span>
+          <span css={subInfoStyle}>{config.insertTime.slice(0, 10)}</span>
         </div>
       </div>
       <div css={tagBox}>
-        {config.tags.map((tag, id) => (
-          <span key={id}>#{tag.tagName}</span>
+        {config.tag.map((tag, id) => (
+          <span key={id}>#{tag}</span>
         ))}
       </div>
       <div css={recordBox}>
-        <span css={writerStyle}>{config.writer}</span>
+        <span css={writerStyle}>{config.insertUserId}</span>
         <span css={likeBox}>
           <FontAwesomeIcon
             icon={faHeart}
@@ -263,7 +264,7 @@ const ListComponent = ({ data, page }: Props) => {
           <div css={noData}>해당하는 게시물이 없습니다.</div>
         )}
       </div>
-      <Paginate page={page} count={100} setPage={setPage} />
+      <Paginate page={page.page} count={page.count} setPage={setPage} />
     </div>
   );
 };

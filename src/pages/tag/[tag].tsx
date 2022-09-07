@@ -1,6 +1,6 @@
-import axios from 'axios';
 import type { NextPage } from 'next';
 
+import { getServerSidePropsForPage } from '../../apis/ssr';
 import Category from '../../components/Category';
 import ListComponent from '../../components/ListComponent';
 import Nav from '../../components/Nav';
@@ -13,38 +13,23 @@ import {
   mainContainer,
   tagSection,
 } from '../../styles/common';
-import type { AudioConfig, VideoConfig } from '../../types/api';
-
-interface Props {
-  selectedTag: string;
-  tags: string[];
-  list: Array<AudioConfig | VideoConfig>;
-  page: number;
-}
+import type { PageProps } from '../../types/common';
 
 export async function getServerSideProps(context: {
   params: { tag: string };
   query: { page?: string };
 }) {
-  const endpoints = [
-    `${process.env.NEXT_PUBLIC_SERVER_API}/tag`,
-    `${process.env.NEXT_PUBLIC_SERVER_API}/list`,
-  ];
-  const [tagResponse, listResponse] = await axios.all(
-    endpoints.map((endpoint) => axios.get(endpoint)),
-  );
+  const start = context.query.page ? Number(context.query.page) : 1;
 
-  return {
-    props: {
-      page: context.query.page ? Number(context.query.page) : 1,
-      tags: tagResponse.data.data,
-      list: listResponse.data.data,
-      selectedTag: context.params.tag,
-    },
-  };
+  const pageData = await getServerSidePropsForPage({
+    start,
+    tag: context.params.tag,
+  });
+
+  return { props: { ...pageData.props, selectedTag: context.params.tag } };
 }
 
-const Tag: NextPage<Props> = ({ selectedTag, tags, list, page }) => (
+const Tag: NextPage<PageProps> = ({ selectedTag, tags, list, page }) => (
   <div css={container}>
     <Nav tags={tags} selectedTag={selectedTag} />
     <Search />
@@ -56,7 +41,7 @@ const Tag: NextPage<Props> = ({ selectedTag, tags, list, page }) => (
         <ListComponent data={list} page={page} />
       </section>
       <section css={tagSection}>
-        <TagComponent tags={tags} selectedTag={selectedTag} />
+        <TagComponent tags={tags} selectedTag={selectedTag || ''} />
       </section>
     </div>
   </div>
