@@ -51,7 +51,7 @@ export interface PostConfig {
   like: number;
   insertTime: string;
   insertUserId: string;
-  startTime: string;
+  startTime?: string;
   tag: string[];
 }
 export interface PostResponseConfig {
@@ -67,7 +67,7 @@ export interface PostResponseConfig {
   };
 }
 
-export interface ViewRequestConfig {
+export interface ViewResponseConfig {
   code: number;
   message: string;
   data: PostConfig;

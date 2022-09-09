@@ -6,6 +6,7 @@ import { LOGIN, LOGOUT } from '../actions';
 const initialState: LoginState = {
   isLogin: false,
   userName: '',
+  userSeq: Number.MAX_SAFE_INTEGER,
 };
 
 const loginReducer = (state = initialState, action: AnyAction): LoginState => {
