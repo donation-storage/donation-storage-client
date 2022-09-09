@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 import type { PostRequestConfig } from '../types/api';
-import { logger } from '../utills/logger';
 import { getPostListApi } from './post';
 
 export const getServerSidePropsForPage = async (
@@ -11,9 +10,7 @@ export const getServerSidePropsForPage = async (
     `${process.env.NEXT_PUBLIC_SERVER_API}/tag`,
   );
 
-  const listResponse = await getPostListApi(requestBody)!;
-
-  logger.info(listResponse);
+  const listResponse = await getPostListApi(requestBody);
 
   if (listResponse!.code === 0) {
     return {

@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/consistent-destructuring */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { css } from '@emotion/react';
 // import { faHeart as faHeartNone } from '@fortawesome/free-regular-svg-icons';
@@ -18,8 +19,7 @@ import {
   fontSCroreDream,
   primaryColor,
 } from '../styles/common';
-import type { AudioConfig, VideoConfig } from '../types/api';
-import { isAudioConfig } from '../types/api';
+import type { PostConfig } from '../types/api';
 import { formatStartTime, srcToFile } from '../utills/common';
 import { logger } from '../utills/logger';
 
@@ -197,11 +197,11 @@ const funcBox = css`
   }
 `;
 
-const ViewComponent = (props: { data: VideoConfig | AudioConfig }) => {
-  const { postName, tags, writer, createdAt, like } = props.data;
-  const file = isAudioConfig(props.data) ? props.data.file : '';
-  const url = !isAudioConfig(props.data) ? props.data.url : '';
-  const startTime = !isAudioConfig(props.data) ? props.data.startTime : 0;
+const ViewComponent = (props: { data: PostConfig }) => {
+  const { postName, tag, insertUserId, insertTime, like, type } = props.data;
+  const file = type === 'audio' ? props.data.link : '';
+  const url = type !== 'audio' ? props.data.link : '';
+  const startTime = type !== 'audio' ? Number(props.data.startTime) : 0;
   const [hour, minute, second] = formatStartTime(startTime);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const router = useRouter();
@@ -217,13 +217,19 @@ const ViewComponent = (props: { data: VideoConfig | AudioConfig }) => {
     }
   }, [embedRef]);
 
+  const formatFileName = () => {
+    const fileExtension = file.split('.').reverse()[0];
+
+    return `${postName}.${fileExtension}`;
+  };
+
   const download = async () => {
-    const blob = await srcToFile(file, file.split('/').reverse()[0]);
+    const blob = await srcToFile(file, formatFileName());
 
     const fileUrl = window.URL.createObjectURL(new Blob([blob]));
     const link = document.createElement('a');
     link.href = fileUrl;
-    link.setAttribute('download', file.split('/').reverse()[0]);
+    link.setAttribute('download', formatFileName());
 
     document.body.append(link);
 
@@ -259,15 +265,15 @@ const ViewComponent = (props: { data: VideoConfig | AudioConfig }) => {
         <div css={titleBox}>
           <h1 css={title}>{postName}</h1>
           <div css={tagBox}>
-            {tags.map((tag, index) => (
-              <span key={index}>#{tag.tagName}</span>
+            {tag.map((tagName, index) => (
+              <span key={index}>#{tagName}</span>
             ))}
           </div>
         </div>
         <div css={subTitleBox}>
           <div css={infoBox}>
-            <div>{writer}</div>
-            <div>{createdAt}</div>
+            <div>{insertUserId}</div>
+            <div>{insertTime.slice(0, 10)}</div>
           </div>
           <div css={writerBox}>
             <button>수정</button>
@@ -281,10 +287,10 @@ const ViewComponent = (props: { data: VideoConfig | AudioConfig }) => {
           </div>
         </div>
         <div css={contentBox}>
-          {isAudioConfig(props.data) ? (
+          {type === 'audio' ? (
             <div css={audioBox}>
               <div css={fileInfo}>
-                <span>{file.split('/').reverse()[0]}</span>
+                <span>{formatFileName()}</span>
                 <button
                   onClick={() => {
                     void download();

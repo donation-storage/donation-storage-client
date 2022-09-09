@@ -40,6 +40,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           login({
             isLogin: true,
             userName: data.userName,
+            userSeq: data.userSeq,
           }) as unknown as AnyAction,
         );
       }
