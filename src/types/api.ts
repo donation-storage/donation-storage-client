@@ -37,6 +37,7 @@ export interface UserAuth {
 export interface PostRequestConfig {
   keyword?: string;
   tag?: string;
+  type?: 'a' | 'v';
   userId?: string;
   start?: number;
   length?: number;

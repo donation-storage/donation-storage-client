@@ -72,7 +72,7 @@ const paginationContainer = css`
 `;
 
 const Paginate = ({
-  page,
+  page = 1,
   count,
   setPage,
   itemsCountPerPage = 10,

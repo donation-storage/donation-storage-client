@@ -19,7 +19,7 @@ export async function getServerSideProps(context: {
   params: { word: string };
   query: { page?: string };
 }) {
-  const start = context.query.page ? Number(context.query.page) : 1;
+  const start = Number(context.query.page) || 1;
 
   const pageData = await getServerSidePropsForPage({
     start,

@@ -19,11 +19,11 @@ export async function getServerSideProps(context: {
   params: { tag: string };
   query: { page?: string };
 }) {
-  const start = context.query.page ? Number(context.query.page) : 1;
+  const start = Number(context.query.page) || 1;
 
   const pageData = await getServerSidePropsForPage({
     start,
-    tag: context.params.tag,
+    keyword: context.params.tag,
   });
 
   return { props: { ...pageData.props, selectedTag: context.params.tag } };

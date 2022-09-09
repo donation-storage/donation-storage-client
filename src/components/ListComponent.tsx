@@ -14,7 +14,6 @@ import {
 import type { PostConfig } from '../types/api';
 import type { PageConfig } from '../types/common';
 import { isYoutueUrl } from '../utills/common';
-import { logger } from '../utills/logger';
 
 const container = css`
   display: flex;
@@ -231,7 +230,6 @@ const VideoRecord = ({ config }: { config: PostConfig }) => {
 
 const ListComponent = ({ data, page }: Props) => {
   const router = useRouter();
-  logger.log(router);
 
   const setPage = (pageTo: number) => {
     void router.push({
