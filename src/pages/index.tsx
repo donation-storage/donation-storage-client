@@ -18,7 +18,7 @@ import type { PageProps } from '../types/common';
 export async function getServerSideProps(context: {
   query: { page?: string };
 }) {
-  const start = context.query.page ? Number(context.query.page) : 1;
+  const start = Number(context.query.page) || 1;
 
   return getServerSidePropsForPage({ start });
 }

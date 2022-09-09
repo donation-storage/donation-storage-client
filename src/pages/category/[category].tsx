@@ -16,12 +16,14 @@ import {
 import type { PageProps } from '../../types/common';
 
 export async function getServerSideProps(context: {
-  params: { category: string };
+  params: { category?: 'audio' | 'video' };
   query: { page?: string };
 }) {
-  const start = context.query.page ? Number(context.query.page) : 1;
+  const start = Number(context.query.page) || 1;
 
-  const pageData = await getServerSidePropsForPage({ start });
+  const type = (context.params.category?.charAt(0) as 'v' | 'a') || undefined;
+
+  const pageData = await getServerSidePropsForPage({ start, type });
 
   return { props: { ...pageData.props, category: context.params.category } };
 }

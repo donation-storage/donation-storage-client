@@ -6,7 +6,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import useLocalStorage from '../hooks/useLocalStorage';
 import { displayNone, primaryColor } from '../styles/common';
@@ -110,11 +110,17 @@ interface Props {
 
 const Search = ({ searchWord }: Props) => {
   const router = useRouter();
-  const [search, setSearch] = useState(searchWord || '');
+  const [search, setSearch] = useState('');
   const [searchHistory, setSearchHistory] = useLocalStorage(
     'searchHistory',
     [] as string[],
   );
+
+  useEffect(() => {
+    if (router.isReady) {
+      setSearch(searchWord || '');
+    }
+  }, [searchWord, router.isReady]);
 
   const deleteSearchHistory = (id: number) => {
     setSearchHistory(searchHistory!.filter((_, index) => index !== id));
@@ -122,9 +128,15 @@ const Search = ({ searchWord }: Props) => {
 
   const enterToSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      if (search !== '') {
+      if (search.trim() !== '') {
         const historySet = new Set([search, ...searchHistory!]);
         setSearchHistory([...historySet].slice(0, 10));
+      }
+
+      if (search.trim() === '') {
+        setSearch('');
+
+        return void router.push('/');
       }
 
       void router.push(`/search/${search}`);
@@ -132,9 +144,15 @@ const Search = ({ searchWord }: Props) => {
   };
 
   const clickToSearch = () => {
-    if (search !== '') {
+    if (search.trim() !== '') {
       const historySet = new Set([search, ...searchHistory!]);
       setSearchHistory([...historySet].slice(0, 10));
+    }
+
+    if (search.trim() === '') {
+      setSearch('');
+
+      return void router.push('/');
     }
 
     void router.push(`/search/${search}`);
