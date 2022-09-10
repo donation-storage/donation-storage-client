@@ -4,8 +4,11 @@ import { faTwitch, faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { faHeart, faMusic } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import Paginate from '../items/Paginate';
+import type { RootState } from '../redux/reducers';
 import {
   fontNanumSquare,
   fontPyeongChangLight,
@@ -14,6 +17,7 @@ import {
 import type { PostConfig } from '../types/api';
 import type { PageConfig } from '../types/common';
 import { isYoutueUrl } from '../utills/common';
+import LoginModal from './LoginModal';
 
 const container = css`
   display: flex;
@@ -200,7 +204,7 @@ const VideoRecord = ({ config }: { config: PostConfig }) => {
             }}
           >
             {config.postName}
-          </h1>{' '}
+          </h1>
         </div>
         <div css={flexRow}>
           <span css={subInfoStyle}>영상제목</span>
@@ -230,6 +234,10 @@ const VideoRecord = ({ config }: { config: PostConfig }) => {
 
 const ListComponent = ({ data, page }: Props) => {
   const router = useRouter();
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const loginModalRef = useRef<HTMLDivElement>(null);
+  const loginButtonRef = useRef<HTMLButtonElement>(null);
+  const { isLogin } = useSelector((state: RootState) => state.loginReducer);
 
   const setPage = (pageTo: number) => {
     void router.push({
@@ -238,32 +246,64 @@ const ListComponent = ({ data, page }: Props) => {
     });
   };
 
+  const handleClickOutside = useCallback(
+    ({ target }: MouseEvent) => {
+      if (
+        !loginModalRef.current!.contains(target as Node) &&
+        !loginButtonRef.current!.contains(target as Node)
+      ) {
+        setIsLoginModalOpen(false);
+      }
+    },
+    [setIsLoginModalOpen],
+  );
+
+  useEffect(() => {
+    window.addEventListener('click', handleClickOutside);
+
+    return () => {
+      window.removeEventListener('click', handleClickOutside);
+    };
+  }, [handleClickOutside]);
+
+  const onUploadButtonClick = () => {
+    if (isLogin) {
+      void router.push('/upload');
+    } else {
+      setIsLoginModalOpen(true);
+    }
+  };
+
   return (
-    <div css={container}>
-      <div css={uploadButton}>
-        <button
-          onClick={() => {
-            void router.push('/upload');
-          }}
-        >
-          등록
-        </button>
+    <>
+      <div css={container}>
+        <div css={uploadButton}>
+          <button
+            ref={loginButtonRef}
+            onClick={() => {
+              onUploadButtonClick();
+            }}
+          >
+            등록
+          </button>
+        </div>
+        <div css={listBox}>
+          {data.length > 0 ? (
+            data.map((record, index) =>
+              record.type === 'audio' ? (
+                <AudioRecord config={record} key={index} />
+              ) : (
+                <VideoRecord config={record} key={index} />
+              ),
+            )
+          ) : (
+            <div css={noData}>해당하는 게시물이 없습니다.</div>
+          )}
+        </div>
+        <Paginate page={page.page} count={page.count} setPage={setPage} />
       </div>
-      <div css={listBox}>
-        {data.length > 0 ? (
-          data.map((record, index) =>
-            record.type === 'audio' ? (
-              <AudioRecord config={record} key={index} />
-            ) : (
-              <VideoRecord config={record} key={index} />
-            ),
-          )
-        ) : (
-          <div css={noData}>해당하는 게시물이 없습니다.</div>
-        )}
-      </div>
-      <Paginate page={page.page} count={page.count} setPage={setPage} />
-    </div>
+      <LoginModal isOpen={isLoginModalOpen} modalRef={loginModalRef} />
+    </>
   );
 };
 
