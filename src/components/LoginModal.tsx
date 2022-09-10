@@ -96,7 +96,7 @@ const LoginModal = ({ isOpen, modalRef }: Props) => {
       <div ref={modalRef} css={modalContainer}>
         <div css={loginTitle}>로그인</div>
         <a
-          href="https://server.donationstorage.net/oauth2/authorization/twitch"
+          href={`${process.env.NEXT_PUBLIC_SERVER_API}/oauth2/authorization/twitch`}
           css={loginButton('#64449f', '26px', '15px')}
         >
           <button>
@@ -105,7 +105,7 @@ const LoginModal = ({ isOpen, modalRef }: Props) => {
           </button>
         </a>
         <a
-          href="https://server.donationstorage.net/oauth2/authorization/naver"
+          href={`${process.env.NEXT_PUBLIC_SERVER_API}/oauth2/authorization/naver`}
           css={loginButton('#00bf18', '25px', '15px')}
         >
           <button>
@@ -114,7 +114,7 @@ const LoginModal = ({ isOpen, modalRef }: Props) => {
           </button>
         </a>
         <a
-          href="https://server.donationstorage.net/oauth2/authorization/google"
+          href={`${process.env.NEXT_PUBLIC_SERVER_API}/oauth2/authorization/google`}
           css={loginButton('#a0a0a0', '28px', '12.5px')}
         >
           <button>

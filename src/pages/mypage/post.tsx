@@ -11,9 +11,7 @@ interface Props {
 }
 
 export async function getServerSideProps() {
-  const response = await axios.get(
-    `${process.env.NEXT_PUBLIC_SERVER_API}/mypage`,
-  );
+  const response = await axios.get('http://msw.mock/mypage');
 
   return {
     props: {

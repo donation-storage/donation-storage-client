@@ -54,9 +54,14 @@ export interface PostConfig {
   startTime?: string;
   tag: string[];
 }
-export interface PostResponseConfig {
+
+export interface CommonResponseConfig {
   code: number;
   message: string;
+  data: unknown;
+}
+
+export interface PostResponseConfig extends CommonResponseConfig {
   data: {
     startPage: number;
     pages: number;
@@ -67,8 +72,19 @@ export interface PostResponseConfig {
   };
 }
 
-export interface ViewResponseConfig {
+export interface ViewResponseConfig extends CommonResponseConfig {
+  data: PostConfig;
+}
+
+export interface LikeCountResponseConfig extends CommonResponseConfig {
+  data: { likeCount: number };
+}
+
+export interface LikePutResponseConfig {
   code: number;
   message: string;
-  data: PostConfig;
+}
+
+export interface LikeCheckResponseConfig extends CommonResponseConfig {
+  data: { like: boolean };
 }

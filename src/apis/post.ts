@@ -15,7 +15,7 @@ import { logger } from '../utills/logger';
 export const getPostListApi = async (requestBody: PostRequestConfig) => {
   try {
     const response = await axios.post<PostResponseConfig>(
-      'https://server.donationstorage.net/post',
+      `${process.env.NEXT_PUBLIC_SERVER_API}/post`,
       {
         ...requestBody,
         length: 10,
@@ -34,7 +34,7 @@ export const getPostListApi = async (requestBody: PostRequestConfig) => {
 export const getOnePostApi = async (postSeq: string) => {
   try {
     const response = await axios.get<ViewResponseConfig>(
-      `https://server.donationstorage.net/post/${postSeq}`,
+      `${process.env.NEXT_PUBLIC_SERVER_API}/post/${postSeq}`,
       {
         withCredentials: true,
       },

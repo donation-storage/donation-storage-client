@@ -6,9 +6,7 @@ import { getPostListApi } from './post';
 export const getServerSidePropsForPage = async (
   requestBody: PostRequestConfig,
 ) => {
-  const tagResponse = await axios.get(
-    `${process.env.NEXT_PUBLIC_SERVER_API}/tag`,
-  );
+  const tagResponse = await axios.get('http://msw.mock/tag');
 
   const listResponse = await getPostListApi(requestBody);
 
