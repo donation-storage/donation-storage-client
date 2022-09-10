@@ -1,19 +1,25 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable unicorn/consistent-destructuring */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { css } from '@emotion/react';
-// import { faHeart as faHeartNone } from '@fortawesome/free-regular-svg-icons';
+import { faHeart as faHeartNone } from '@fortawesome/free-regular-svg-icons';
 import {
   faArrowLeft,
   faHeart,
   faShareFromSquare,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import axios from 'axios';
 import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 
+import { deleteLike, getIsLiked, getLikeCount, putLike } from '../apis/like';
 import Confirm from '../items/Confirm';
 import Dialog from '../items/Dialog';
 import VideoEmbed from '../items/VideoEmbed';
+import type { RootState } from '../redux/reducers';
 import {
   fontNanumSquare,
   fontSCroreDream,
@@ -22,6 +28,7 @@ import {
 import type { PostConfig } from '../types/api';
 import { formatStartTime, srcToFile } from '../utills/common';
 import { logger } from '../utills/logger';
+import LoginModal from './LoginModal';
 
 const container = css`
   display: flex;
@@ -208,6 +215,30 @@ const ViewComponent = (props: { data: PostConfig }) => {
   const embedRef = useRef<HTMLDivElement>(null);
   const [embedWidth, setEmbedWidth] = useState(640);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [likeCount, setLikeCount] = useState(like);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const loginModalRef = useRef<HTMLDivElement>(null);
+  const loginButtonRef = useRef<HTMLButtonElement>(null);
+  const { isLogin, userSeq } = useSelector(
+    (state: RootState) => state.loginReducer,
+  );
+
+  const getLike = useCallback(async () => {
+    const [isLiked, likeCount] = await axios.all([
+      await getIsLiked(userSeq, props.data.postSeq),
+      await getLikeCount(props.data.postSeq),
+    ]);
+
+    setIsLiked(isLiked as boolean);
+    setLikeCount(likeCount as number);
+  }, [props.data.postSeq, userSeq]);
+
+  useEffect(() => {
+    if (isLogin) {
+      void getLike();
+    }
+  }, [isLogin, getLike]);
 
   useEffect(() => {
     if (embedRef.current) {
@@ -216,6 +247,20 @@ const ViewComponent = (props: { data: PostConfig }) => {
       );
     }
   }, [embedRef]);
+
+  const handleLike = async () => {
+    if (!isLogin) {
+      setIsLoginModalOpen(true);
+
+      return;
+    }
+
+    await (isLiked
+      ? deleteLike(userSeq, props.data.postSeq)
+      : putLike(userSeq, props.data.postSeq));
+
+    void getLike();
+  };
 
   const formatFileName = () => {
     const fileExtension = file.split('.').reverse()[0];
@@ -249,6 +294,26 @@ const ViewComponent = (props: { data: PostConfig }) => {
     void navigator.clipboard.writeText(url);
     openDialog();
   };
+
+  const handleClickOutside = useCallback(
+    ({ target }: MouseEvent) => {
+      if (
+        !loginModalRef.current!.contains(target as Node) &&
+        !loginButtonRef.current!.contains(target as Node)
+      ) {
+        setIsLoginModalOpen(false);
+      }
+    },
+    [setIsLoginModalOpen],
+  );
+
+  useEffect(() => {
+    window.addEventListener('click', handleClickOutside);
+
+    return () => {
+      window.removeEventListener('click', handleClickOutside);
+    };
+  }, [handleClickOutside]);
 
   return (
     <>
@@ -333,9 +398,14 @@ const ViewComponent = (props: { data: PostConfig }) => {
           )}
         </div>
         <div css={funcBox}>
-          <button>
-            <span>{like}</span>
-            <FontAwesomeIcon icon={faHeart} />
+          <button
+            ref={loginButtonRef}
+            onClick={() => {
+              void handleLike();
+            }}
+          >
+            <span>{likeCount}</span>
+            <FontAwesomeIcon icon={isLiked ? faHeart : (faHeartNone as any)} />
           </button>
           <button>
             <FontAwesomeIcon icon={faShareFromSquare} />
@@ -356,6 +426,7 @@ const ViewComponent = (props: { data: PostConfig }) => {
           setIsModalOpen(false);
         }}
       />
+      <LoginModal isOpen={isLoginModalOpen} modalRef={loginModalRef} />
     </>
   );
 };

@@ -46,9 +46,10 @@ const audioplayerBox = css`
 interface Props {
   file: File | null;
   setFile: (file: File | null) => void;
+  setDuration: (second: number) => void;
 }
 
-const UploadAudio = ({ file, setFile }: Props) => (
+const UploadAudio = ({ file, setFile, setDuration }: Props) => (
   <div css={container}>
     <div css={fileBox}>
       <input
@@ -67,7 +68,13 @@ const UploadAudio = ({ file, setFile }: Props) => (
       <div css={fileName}>{file?.name || ''}</div>
     </div>
     <div css={audioplayerBox}>
-      <audio src={file ? URL.createObjectURL(file) : ''} controls />
+      <audio
+        src={file ? URL.createObjectURL(file) : ''}
+        controls
+        onLoadedMetadata={(e) => {
+          setDuration(e.currentTarget.duration);
+        }}
+      />
     </div>
   </div>
 );

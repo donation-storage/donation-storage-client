@@ -1,16 +1,24 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { css, keyframes } from '@emotion/react';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import axios from 'axios';
 import urlParser from 'js-video-url-parser';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
+import {
+  getTwitchClipTitleApi,
+  getTwitchVideoTitleApi,
+  getYouTubeTitleApi,
+} from '../apis/post';
 import Modal from '../items/Modal';
 import Switch from '../items/Switch';
 import UploadAudio from '../items/UploadAudio';
 import UploadVideoUrl from '../items/UploadVideoUrl';
 import { fontSCroreDream, primaryColor } from '../styles/common';
 import { regexTag } from '../utills/common';
+import { logger } from '../utills/logger';
 
 const container = css`
   background-color: #f7fafb;
@@ -174,6 +182,8 @@ const Upload = () => {
   const [startHour, setStartHour] = useState('');
   const [startMinute, setStartMinute] = useState('');
   const [startSecond, setStartSecond] = useState('');
+  const [duration, setDuration] = useState('');
+  const [videoTitle, setVideoTitle] = useState('');
 
   const onChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
@@ -198,6 +208,19 @@ const Upload = () => {
     ) {
       setTags(tags.slice(0, -1));
     }
+  };
+
+  const handleDuration = (second: number) => {
+    if (second < 60 * 10) {
+      setModalContent('10분 이상의 음성파일은 업로드가 불가능합니다.');
+      setIsModalOpen(true);
+      setAudio(null);
+
+      return;
+    }
+
+    const formatDuration = new Date(second * 1000).toISOString().slice(14, 19);
+    setDuration(formatDuration);
   };
 
   const handleTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -263,7 +286,7 @@ const Upload = () => {
     }
   };
 
-  const onChangeEmbedUrl = useCallback(() => {
+  const onChangeEmbedUrl = useCallback(async () => {
     if (videoUrl === '') {
       setEmbedConfig({
         status: 'none',
@@ -288,6 +311,10 @@ const Upload = () => {
 
     if (provider === 'twitch') {
       if (mediaType === 'video' && id) {
+        const twitchVideoTitle = await getTwitchVideoTitleApi(
+          id.replace('v', ''),
+        );
+        setVideoTitle(twitchVideoTitle!);
         setEmbedConfig({
           status: 'twitch/video',
           id,
@@ -296,6 +323,8 @@ const Upload = () => {
         return;
       } else if (mediaType === 'clip' && id) {
         const clipId = videoUrl.split('clip/')[1];
+        const twitchClipTitle = await getTwitchClipTitleApi(clipId);
+        setVideoTitle(twitchClipTitle!);
         setEmbedConfig({
           status: 'twitch/clip',
           id: clipId,
@@ -306,6 +335,9 @@ const Upload = () => {
     }
 
     if (provider === 'youtube' && mediaType === 'video' && id) {
+      const youtubeTitle = await getYouTubeTitleApi(id);
+      setVideoTitle(youtubeTitle!);
+
       setEmbedConfig({
         status: 'youtube/video',
         id,
@@ -321,7 +353,7 @@ const Upload = () => {
   }, [videoUrl]);
 
   useEffect(() => {
-    onChangeEmbedUrl();
+    void onChangeEmbedUrl();
   }, [onChangeEmbedUrl]);
 
   const checkUpload = () => {
@@ -432,7 +464,11 @@ const Upload = () => {
           </span>
         </div>
         {type === 'audio' ? (
-          <UploadAudio file={audio} setFile={setAudio} />
+          <UploadAudio
+            file={audio}
+            setFile={setAudio}
+            setDuration={handleDuration}
+          />
         ) : (
           <UploadVideoUrl
             videoUrl={videoUrl}
@@ -474,6 +510,7 @@ const Upload = () => {
           content={modalContent}
           onClose={() => {
             setIsModalOpen(false);
+            setModalContent('');
           }}
         />
       )}

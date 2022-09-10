@@ -42,7 +42,7 @@ const paginationContainer = css`
     ${fontNanumSquare}
     font-weight: 800;
   }
-  ul.pagination li:first-child {
+  ul.pagination li:nth-of-type(1) {
     border-radius: 30px 0 0 30px;
   }
   ul.pagination li:last-child {

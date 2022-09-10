@@ -21,9 +21,7 @@ interface Props {
 }
 
 export async function getServerSideProps(context: { params: { id: string } }) {
-  const tagResponse = await axios.get(
-    `${process.env.NEXT_PUBLIC_SERVER_API}/tag`,
-  );
+  const tagResponse = await axios.get('http://msw.mock/tag');
 
   const viewResponse = await getOnePostApi(context.params.id);
 
