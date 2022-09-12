@@ -225,7 +225,7 @@ const Upload = () => {
   };
 
   const handleDuration = (second: number) => {
-    if (second < 60 * 10) {
+    if (second > 60 * 10) {
       setModalContent('10분 이상의 음성파일은 업로드가 불가능합니다.');
       setIsModalOpen(true);
       setAudio(null);
