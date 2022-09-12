@@ -88,3 +88,8 @@ export interface LikePutResponseConfig {
 export interface LikeCheckResponseConfig extends CommonResponseConfig {
   data: { like: boolean };
 }
+
+export interface PostResultConfig {
+  ResultCode: number;
+  ResultData: string;
+}

@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prefer-default-parameters */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import axios from 'axios';
 
@@ -19,10 +20,30 @@ export const srcToFile = async (src: string, fileName: string) => {
   return new File([response.data], fileName, { type: mimeType });
 };
 
-export const formatStartTime = (startTime: number): string[] => {
-  const hour = Math.floor(startTime / 3600);
-  const minute = Math.floor((startTime % 3600) / 60);
-  const second = Math.floor(startTime % 60);
+export const formatStartTimeToNum = (startTime: string): number => {
+  const hour = Number(startTime.split(':')[0]) * 60 * 60;
+  const minute = Number(startTime.split(':')[1]) * 60;
+  const second = Number(startTime.split(':')[2]);
 
-  return [hour, minute, second].map((time) => time.toString().padStart(2, '0'));
+  return hour + minute + second;
+};
+
+export const splitStartTime = (startTime: string): string[] => {
+  const hour = startTime.split(':')[0];
+  const minute = startTime.split(':')[1];
+  const second = startTime.split(':')[2];
+
+  return [hour, minute, second];
+};
+
+export const formatStartTimeToString = (
+  startHour: string,
+  startMinute: string,
+  startSecond: string,
+): string => {
+  const hour = startHour || '00';
+  const minute = startMinute || '00';
+  const second = startSecond || '00';
+
+  return `${hour}:${minute}:${second}`;
 };

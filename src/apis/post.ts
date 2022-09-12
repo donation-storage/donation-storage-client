@@ -8,6 +8,7 @@ import axios from 'axios';
 import type {
   PostRequestConfig,
   PostResponseConfig,
+  PostResultConfig,
   ViewResponseConfig,
 } from '../types/api';
 import { logger } from '../utills/logger';
@@ -99,6 +100,38 @@ export const getTwitchVideoTitleApi = async (videoId: string) => {
     );
 
     return res.data.data[0].title;
+  } catch (error) {
+    logger.log(error);
+  }
+};
+
+export const postAudioApi = async (requestBody: FormData) => {
+  try {
+    const response = await axios.put<PostResultConfig>(
+      `${process.env.NEXT_PUBLIC_SERVER_API}/post/audio`,
+      requestBody,
+      {
+        withCredentials: true,
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    logger.log(error);
+  }
+};
+
+export const postVideoApi = async (requestBody: FormData) => {
+  try {
+    const response = await axios.put<PostResultConfig>(
+      `${process.env.NEXT_PUBLIC_SERVER_API}/post/video`,
+      requestBody,
+      {
+        withCredentials: true,
+      },
+    );
+
+    return response.data;
   } catch (error) {
     logger.log(error);
   }
