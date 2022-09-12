@@ -2,7 +2,6 @@
 import { css, keyframes } from '@emotion/react';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import axios from 'axios';
 import urlParser from 'js-video-url-parser';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -11,13 +10,16 @@ import {
   getTwitchClipTitleApi,
   getTwitchVideoTitleApi,
   getYouTubeTitleApi,
+  postAudioApi,
+  postVideoApi,
 } from '../apis/post';
+import { getUserInfoApi } from '../apis/user';
 import Modal from '../items/Modal';
 import Switch from '../items/Switch';
 import UploadAudio from '../items/UploadAudio';
 import UploadVideoUrl from '../items/UploadVideoUrl';
 import { fontSCroreDream, primaryColor } from '../styles/common';
-import { regexTag } from '../utills/common';
+import { formatStartTimeToString, regexTag } from '../utills/common';
 import { logger } from '../utills/logger';
 
 const container = css`
@@ -184,6 +186,18 @@ const Upload = () => {
   const [startSecond, setStartSecond] = useState('');
   const [duration, setDuration] = useState('');
   const [videoTitle, setVideoTitle] = useState('');
+
+  const getUserInfo = useCallback(async () => {
+    try {
+      await getUserInfoApi();
+    } catch {
+      void router.push('/');
+    }
+  }, [router]);
+
+  useEffect(() => {
+    void getUserInfo();
+  }, [getUserInfo]);
 
   const onChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
@@ -387,13 +401,41 @@ const Upload = () => {
     return true;
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (!checkUpload()) {
       return;
     }
 
-    setModalContent('등록되었습니다.');
-    setIsModalOpen(true);
+    try {
+      const formData = new FormData();
+      formData.append('postName', title);
+      formData.append('type', type);
+
+      for (const tag of tags) {
+        formData.append('tagArray', tag);
+      }
+
+      if (type === 'audio') {
+        formData.append('file', audio!);
+      } else if (type === 'video') {
+        formData.append('link', videoUrl);
+        formData.append(
+          'startTime',
+          formatStartTimeToString(startHour, startMinute, startSecond),
+        );
+      }
+
+      const res =
+        type === 'audio'
+          ? await postAudioApi(formData)
+          : await postVideoApi(formData);
+
+      if (res?.ResultCode === 1) {
+        void router.push('/');
+      }
+    } catch (error) {
+      logger.log(error);
+    }
   };
 
   return (

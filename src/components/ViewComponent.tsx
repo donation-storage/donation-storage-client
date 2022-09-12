@@ -26,7 +26,11 @@ import {
   primaryColor,
 } from '../styles/common';
 import type { PostConfig } from '../types/api';
-import { formatStartTime, srcToFile } from '../utills/common';
+import {
+  formatStartTimeToNum,
+  splitStartTime,
+  srcToFile,
+} from '../utills/common';
 import { logger } from '../utills/logger';
 import LoginModal from './LoginModal';
 
@@ -208,8 +212,8 @@ const ViewComponent = (props: { data: PostConfig }) => {
   const { postName, tag, insertUserId, insertTime, like, type } = props.data;
   const file = type === 'audio' ? props.data.link : '';
   const url = type !== 'audio' ? props.data.link : '';
-  const startTime = type !== 'audio' ? Number(props.data.startTime) : 0;
-  const [hour, minute, second] = formatStartTime(startTime);
+  const startTime = type !== 'audio' ? props.data.startTime : '';
+  const [hour, minute, second] = splitStartTime(startTime!);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const router = useRouter();
   const embedRef = useRef<HTMLDivElement>(null);
@@ -390,7 +394,7 @@ const ViewComponent = (props: { data: PostConfig }) => {
               <div ref={embedRef}>
                 <VideoEmbed
                   videoUrl={url}
-                  startTime={startTime}
+                  startTime={formatStartTimeToNum(startTime!)}
                   width={embedWidth}
                 />
               </div>
