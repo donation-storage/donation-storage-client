@@ -19,7 +19,7 @@ export const getPostListApi = async (requestBody: PostRequestConfig) => {
       `${process.env.NEXT_PUBLIC_SERVER_API}/post`,
       {
         ...requestBody,
-        length: 10,
+        length: requestBody.length || 10,
       },
       {
         withCredentials: true,
@@ -112,6 +112,7 @@ export const postAudioApi = async (requestBody: FormData) => {
       requestBody,
       {
         withCredentials: true,
+        headers: { 'Content-Type': 'multipart/form-data' },
       },
     );
 
@@ -128,6 +129,7 @@ export const postVideoApi = async (requestBody: FormData) => {
       requestBody,
       {
         withCredentials: true,
+        headers: { 'Content-Type': 'multipart/form-data' },
       },
     );
 
