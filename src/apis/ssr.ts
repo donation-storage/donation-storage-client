@@ -1,12 +1,11 @@
-import axios from 'axios';
-
 import type { PostRequestConfig } from '../types/api';
 import { getPostListApi } from './post';
+import { getTagApi } from './tag';
 
 export const getServerSidePropsForPage = async (
   requestBody: PostRequestConfig,
 ) => {
-  const tagResponse = await axios.get('http://msw.mock/tag');
+  const tagResponse = await getTagApi();
 
   const listResponse = await getPostListApi(requestBody);
 
@@ -17,7 +16,7 @@ export const getServerSidePropsForPage = async (
           page: 1,
           count: 0,
         },
-        tags: tagResponse.data.data,
+        tags: tagResponse,
         list: [],
       },
     };
@@ -29,7 +28,7 @@ export const getServerSidePropsForPage = async (
         page: requestBody.start,
         count: Number(listResponse!.data.count),
       },
-      tags: tagResponse.data.data,
+      tags: tagResponse,
       list: listResponse!.data.data || [],
     },
   };

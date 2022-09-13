@@ -13,7 +13,7 @@ export interface PageConfig {
 }
 
 export interface PageProps {
-  tags: string[];
+  tags: Array<{ tagName: string }>;
   list: PostConfig[];
   page: PageConfig;
   category?: 'audio' | 'video';

@@ -37,7 +37,7 @@ const tagStyle = (isSelected: boolean) => css`
 
 export interface TagProps {
   selectedTag: string;
-  tags: string[];
+  tags: Array<{ tagName: string }>;
 }
 
 const TagComponent = ({ selectedTag, tags }: TagProps) => {
@@ -48,12 +48,12 @@ const TagComponent = ({ selectedTag, tags }: TagProps) => {
       {tags.map((tag, index) => (
         <span
           key={index}
-          css={tagStyle(tag === selectedTag)}
+          css={tagStyle(tag.tagName === selectedTag)}
           onClick={() => {
-            void router.push(`/tag/${tag}`);
+            void router.push(`/tag/${tag.tagName}`);
           }}
         >
-          {tag}
+          {tag.tagName}
         </span>
       ))}
     </div>
