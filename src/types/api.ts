@@ -38,7 +38,7 @@ export interface PostRequestConfig {
   keyword?: string;
   tag?: string;
   type?: 'a' | 'v';
-  userId?: number;
+  userId?: string;
   start?: number;
   length?: number;
 }
