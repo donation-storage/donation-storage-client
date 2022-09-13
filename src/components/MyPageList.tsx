@@ -232,7 +232,7 @@ const MypageList = ({ data, page, nickname, title }: Props) => {
       ? '/mypage/post'
       : '/mypage/like';
 
-    if (router.pathname.includes('search=')) {
+    if (router.asPath.includes('search=')) {
       const search = router.query.search as string;
       void router.push(`${path}?page=${pageTo}&search=${search}`);
     } else {
