@@ -34,3 +34,31 @@ export const getServerSidePropsForPage = async (
     },
   };
 };
+
+export const getServerSidePropsForMypage = async (
+  requestBody: PostRequestConfig,
+) => {
+  const listResponse = await getPostListApi(requestBody);
+
+  if (listResponse!.code === 0) {
+    return {
+      props: {
+        page: {
+          page: 1,
+          count: 0,
+        },
+        list: [],
+      },
+    };
+  }
+
+  return {
+    props: {
+      page: {
+        page: requestBody.start,
+        count: Number(listResponse!.data.count),
+      },
+      list: listResponse!.data.data || [],
+    },
+  };
+};

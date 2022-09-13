@@ -1,48 +1,42 @@
-import axios from 'axios';
-import type { NextPage } from 'next';
-import { useState } from 'react';
+import type { GetServerSideProps, NextPage } from 'next';
 
+import { getServerSidePropsForMypage } from '../../apis/ssr';
+import { getUserInfoForSSR } from '../../apis/user';
 import MyPageList from '../../components/MyPageList';
 import MyPageSideBar from '../../components/MypageSideBar';
 import MyPageSearch from '../../items/MyPageSearch';
-import type { AudioConfig, VideoConfig } from '../../types/api';
+import type { MypageProps } from '../../types/common';
 
-interface Props {
-  list: Array<AudioConfig | VideoConfig>;
-}
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  try {
+    const cookie = context.req.headers.cookie;
+    const userData = await getUserInfoForSSR(cookie!);
+    const start = Number(context.query.page) || 1;
+    const keyword = (context.query.search as string) || '';
+    const pageData = await getServerSidePropsForMypage({
+      start,
+      keyword,
+      length: 5,
+      userId: userData.userSeq,
+    });
 
-export async function getServerSideProps() {
-  const response = await axios.get('http://msw.mock/mypage');
-
-  return {
-    props: {
-      list: response.data.data,
-    },
-  };
-}
-
-const Like: NextPage<Props> = ({ list }) => {
-  const [word, setWord] = useState('');
-  const [data, setData] = useState<Array<AudioConfig | VideoConfig>>(list);
-  const [page, setPage] = useState(1);
-
-  return (
-    <MyPageSideBar path="liked">
-      <MyPageSearch
-        word={word}
-        setWord={setWord}
-        setData={setData}
-        setPage={setPage}
-      />
-      <MyPageList
-        page={page}
-        setPage={setPage}
-        data={data}
-        nickname="닉네임"
-        title="좋아요한 글"
-      />
-    </MyPageSideBar>
-  );
+    return { props: { ...pageData.props, word: keyword } };
+  } catch {
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/',
+      },
+      props: {},
+    };
+  }
 };
+
+const Like: NextPage<MypageProps> = ({ list, page, word }: MypageProps) => (
+  <MyPageSideBar path="liked">
+    <MyPageSearch word={word} />
+    <MyPageList page={page} data={list} nickname="닉네임" title="좋아요한 글" />
+  </MyPageSideBar>
+);
 
 export default Like;

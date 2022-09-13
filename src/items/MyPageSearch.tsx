@@ -1,9 +1,10 @@
 import { css } from '@emotion/react';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 import { fontNanumSquare } from '../styles/common';
-import type { AudioConfig, VideoConfig } from '../types/api';
 
 const container = css`
   display: flex;
@@ -40,28 +41,69 @@ const inputBox = css`
 `;
 
 interface Props {
-  word: string;
-  setWord: (word: string) => void;
-  setData: (data: Array<AudioConfig | VideoConfig>) => void;
-  setPage: (page: number) => void;
+  word?: string;
 }
 
-const MyPageSearch = ({ word, setWord }: Props) => (
-  <div css={container}>
-    <div css={inputBox}>
-      <input
-        type="text"
-        placeholder="검색..."
-        value={word}
-        onChange={(e) => {
-          setWord(e.target.value);
-        }}
-      />
-      <button>
-        <FontAwesomeIcon icon={faSearch} />
-      </button>
+const MyPageSearch = ({ word }: Props) => {
+  const router = useRouter();
+  const [searchWord, setSearchWord] = useState('');
+
+  useEffect(() => {
+    if (router.isReady) {
+      setSearchWord(word || '');
+    }
+  }, [word, router.isReady]);
+
+  const enterToSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      const path = router.pathname.includes('/post')
+        ? '/mypage/post'
+        : '/mypage/like';
+
+      if (searchWord.trim() === '') {
+        setSearchWord('');
+
+        return void router.push(path);
+      }
+
+      void router.push(`${path}?search=${searchWord}`);
+    }
+  };
+
+  const clickToSearch = () => {
+    const path = router.pathname.includes('/post')
+      ? '/mypage/post'
+      : '/mypage/like';
+
+    if (searchWord.trim() === '') {
+      setSearchWord('');
+
+      return void router.push(path);
+    }
+
+    void router.push(`${path}?search=${searchWord}`);
+  };
+
+  return (
+    <div css={container}>
+      <div css={inputBox}>
+        <input
+          type="text"
+          placeholder="검색..."
+          value={searchWord}
+          onChange={(e) => {
+            setSearchWord(e.target.value);
+          }}
+          onKeyPress={(e) => {
+            void enterToSearch(e);
+          }}
+        />
+        <button onClick={clickToSearch}>
+          <FontAwesomeIcon icon={faSearch} />
+        </button>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default MyPageSearch;

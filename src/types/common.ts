@@ -20,3 +20,9 @@ export interface PageProps {
   word?: string;
   selectedTag?: string;
 }
+
+export interface MypageProps {
+  list: PostConfig[];
+  page: PageConfig;
+  word?: string;
+}
