@@ -19,7 +19,11 @@ import Switch from '../items/Switch';
 import UploadAudio from '../items/UploadAudio';
 import UploadVideoUrl from '../items/UploadVideoUrl';
 import { fontSCroreDream, primaryColor } from '../styles/common';
-import { formatStartTimeToString, regexTag } from '../utills/common';
+import {
+  formatStartTimeToString,
+  isYoutueUrl,
+  regexTag,
+} from '../utills/common';
 import { logger } from '../utills/logger';
 
 const container = css`
@@ -409,15 +413,16 @@ const Upload = () => {
     try {
       const formData = new FormData();
       formData.append('postName', title);
-      formData.append('type', type);
 
       for (const tag of tags) {
         formData.append('tagArray', tag);
       }
 
       if (type === 'audio') {
+        formData.append('type', 'a');
         formData.append('file', audio!);
       } else if (type === 'video') {
+        formData.append('type', isYoutueUrl(videoUrl) ? 'y' : 't');
         formData.append('link', videoUrl);
         formData.append(
           'startTime',
