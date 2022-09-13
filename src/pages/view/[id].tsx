@@ -1,6 +1,5 @@
-import axios from 'axios';
-
 import { getOnePostApi } from '../../apis/post';
+import { getTagApi } from '../../apis/tag';
 import Category from '../../components/Category';
 import Nav from '../../components/Nav';
 import TagComponent from '../../components/TagComponent';
@@ -16,18 +15,18 @@ import {
 import type { PostConfig } from '../../types/api';
 
 interface Props {
-  tags: string[];
+  tags: Array<{ tagName: string }>;
   data: PostConfig;
 }
 
 export async function getServerSideProps(context: { params: { id: string } }) {
-  const tagResponse = await axios.get('http://msw.mock/tag');
+  const tagResponse = await getTagApi();
 
   const viewResponse = await getOnePostApi(context.params.id);
 
   return {
     props: {
-      tags: tagResponse.data.data,
+      tags: tagResponse,
       data: viewResponse?.data,
     },
   };

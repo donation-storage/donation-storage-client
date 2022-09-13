@@ -93,3 +93,7 @@ export interface PostResultConfig {
   ResultCode: number;
   ResultData: string;
 }
+
+export interface TagResponseConfig extends CommonResponseConfig {
+  data: Array<{ tagName: string }>;
+}

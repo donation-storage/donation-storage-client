@@ -74,7 +74,7 @@ const buttonBox = css`
 interface Props {
   category?: 'video' | 'audio';
   selectedTag?: string;
-  tags?: string[];
+  tags?: Array<{ tagName: string }>;
 }
 
 const Nav = ({ category, ...tagProps }: Props) => {
