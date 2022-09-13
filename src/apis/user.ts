@@ -13,6 +13,20 @@ export const getUserInfoApi = async () => {
   return response.data;
 };
 
+export const getUserInfoForSSR = async (cookie: string) => {
+  const response = await axios.get<UserAuth>(
+    `${process.env.NEXT_PUBLIC_SERVER_API}/user/checkMe`,
+    {
+      withCredentials: true,
+      headers: {
+        Cookie: cookie,
+      },
+    },
+  );
+
+  return response.data;
+};
+
 export const logoutApi = async () => {
   await axios.get(`${process.env.NEXT_PUBLIC_SERVER_API}/user/logout`, {
     withCredentials: true,

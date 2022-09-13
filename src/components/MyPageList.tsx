@@ -7,7 +7,8 @@ import { useRouter } from 'next/router';
 
 import Paginate from '../items/Paginate';
 import { fontNanumSquare, primaryColor } from '../styles/common';
-import type { AudioConfig, VideoConfig } from '../types/api';
+import type { PostConfig } from '../types/api';
+import type { PageConfig } from '../types/common';
 import { isYoutueUrl } from '../utills/common';
 
 const container = css`
@@ -121,15 +122,21 @@ const likeBox = css`
   cursor: pointer;
 `;
 
+const noData = css`
+  display: flex;
+  align-items: center;
+  height: 150px;
+  color: #575757;
+`;
+
 interface Props {
-  page: number;
-  setPage: (page: number) => void;
-  data: Array<AudioConfig | VideoConfig>;
+  page: PageConfig;
+  data: PostConfig[];
   nickname: string;
   title: string;
 }
 
-const AudioRecord = ({ config }: { config: AudioConfig }) => {
+const AudioRecord = ({ config }: { config: PostConfig }) => {
   const router = useRouter();
 
   return (
@@ -140,7 +147,7 @@ const AudioRecord = ({ config }: { config: AudioConfig }) => {
           <h1
             css={postNameStyle}
             onClick={() => {
-              void router.push(`/view/${config.id}`);
+              void router.push(`/view/${config.postSeq}`);
             }}
           >
             {config.postName}
@@ -148,13 +155,13 @@ const AudioRecord = ({ config }: { config: AudioConfig }) => {
         </div>
         <div css={flexRow}>
           <span css={subInfoStyle}>[01:26]</span>
-          <span css={subInfoStyle}>{config.createdAt}</span>
+          <span css={subInfoStyle}>{config.insertTime.slice(0, 10)}</span>
         </div>
       </div>
       <div css={recordBox}>
         <div css={tagBox}>
-          {config.tags.map((tag, id) => (
-            <span key={id}>#{tag.tagName}</span>
+          {config.tag.map((tag, id) => (
+            <span key={id}>#{tag}</span>
           ))}
         </div>
         <span css={likeBox}>
@@ -171,8 +178,8 @@ const AudioRecord = ({ config }: { config: AudioConfig }) => {
   );
 };
 
-const VideoRecord = ({ config }: { config: VideoConfig }) => {
-  const isYoutube = isYoutueUrl(config.url);
+const VideoRecord = ({ config }: { config: PostConfig }) => {
+  const isYoutube = isYoutueUrl(config.link);
   const router = useRouter();
 
   return (
@@ -186,7 +193,7 @@ const VideoRecord = ({ config }: { config: VideoConfig }) => {
           <h1
             css={postNameStyle}
             onClick={() => {
-              void router.push(`/view/${config.id}`);
+              void router.push(`/view/${config.postSeq}`);
             }}
           >
             {config.postName}
@@ -194,13 +201,13 @@ const VideoRecord = ({ config }: { config: VideoConfig }) => {
         </div>
         <div css={flexRow}>
           <span css={subInfoStyle}>영상제목</span>
-          <span css={subInfoStyle}>{config.createdAt}</span>
+          <span css={subInfoStyle}>{config.insertTime.slice(0, 10)}</span>
         </div>
       </div>
       <div css={recordBox}>
         <div css={tagBox}>
-          {config.tags.map((tag, id) => (
-            <span key={id}>#{tag.tagName}</span>
+          {config.tag.map((tag, id) => (
+            <span key={id}>#{tag}</span>
           ))}
         </div>
         <span css={likeBox}>
@@ -217,23 +224,49 @@ const VideoRecord = ({ config }: { config: VideoConfig }) => {
   );
 };
 
-const MypageList = ({ data, page, setPage, nickname, title }: Props) => (
-  <div css={container}>
-    <div css={titleBox}>
-      <h1>{nickname}</h1>
-      <h2>{title}</h2>
-    </div>
-    <div css={listBox}>
-      {data.map((record) =>
-        record.type === 'audio' ? (
-          <AudioRecord config={record} />
+const MypageList = ({ data, page, nickname, title }: Props) => {
+  const router = useRouter();
+
+  const setPage = (pageTo: number) => {
+    const path = router.pathname.includes('/post')
+      ? '/mypage/post'
+      : '/mypage/like';
+
+    if (router.pathname.includes('search=')) {
+      const search = router.query.search as string;
+      void router.push(`${path}?page=${pageTo}&search=${search}`);
+    } else {
+      void router.push(`${path}?page=${pageTo}`);
+    }
+  };
+
+  return (
+    <div css={container}>
+      <div css={titleBox}>
+        <h1>{nickname}</h1>
+        <h2>{title}</h2>
+      </div>
+      <div css={listBox}>
+        {data.length > 0 ? (
+          data.map((record, index) =>
+            record.type === 'audio' ? (
+              <AudioRecord config={record} key={index} />
+            ) : (
+              <VideoRecord config={record} key={index} />
+            ),
+          )
         ) : (
-          <VideoRecord config={record} />
-        ),
-      )}
+          <div css={noData}>해당하는 게시물이 없습니다.</div>
+        )}
+      </div>
+      <Paginate
+        page={page.page}
+        count={page.count}
+        setPage={setPage}
+        itemsCountPerPage={5}
+      />
     </div>
-    <Paginate page={page} count={100} setPage={setPage} itemsCountPerPage={5} />
-  </div>
-);
+  );
+};
 
 export default MypageList;
