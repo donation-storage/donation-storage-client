@@ -118,8 +118,8 @@ const audio = css`
   margin: 0 auto;
 `;
 
-const writerBox = css`
-  display: flex;
+const writerBox = (isVisible: boolean) => css`
+  display: ${isVisible ? 'flex' : 'none'};
   align-items: center;
   justify-content: center;
   gap: 10px;
@@ -224,7 +224,7 @@ const ViewComponent = (props: { data: PostConfig }) => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const loginModalRef = useRef<HTMLDivElement>(null);
   const loginButtonRef = useRef<HTMLButtonElement>(null);
-  const { isLogin, userSeq } = useSelector(
+  const { isLogin, userSeq, userName } = useSelector(
     (state: RootState) => state.loginReducer,
   );
 
@@ -344,7 +344,7 @@ const ViewComponent = (props: { data: PostConfig }) => {
             <div>{insertUserId}</div>
             <div>{insertTime.slice(0, 10)}</div>
           </div>
-          <div css={writerBox}>
+          <div css={writerBox(insertUserId === userName)}>
             <button>수정</button>
             <button
               onClick={() => {
