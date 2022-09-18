@@ -421,6 +421,7 @@ const Upload = () => {
       if (type === 'audio') {
         formData.append('type', 'a');
         formData.append('file', audio!);
+        formData.append('totalTime', duration);
       } else if (type === 'video') {
         formData.append('type', isYoutueUrl(videoUrl) ? 'y' : 't');
         formData.append('link', videoUrl);
@@ -428,6 +429,7 @@ const Upload = () => {
           'startTime',
           formatStartTimeToString(startHour, startMinute, startSecond),
         );
+        formData.append('videoTitle', videoTitle);
       }
 
       const res =
