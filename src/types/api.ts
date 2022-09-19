@@ -58,6 +58,8 @@ export interface PostConfig {
   insertUserId: string;
   startTime?: string;
   tag: string[];
+  totalTime?: string;
+  videoTitle?: string;
 }
 
 export interface CommonResponseConfig {
