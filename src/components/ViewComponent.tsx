@@ -209,7 +209,8 @@ const funcBox = css`
 `;
 
 const ViewComponent = (props: { data: PostConfig }) => {
-  const { postName, tag, insertUserId, insertTime, like, type } = props.data;
+  const { postName, tag, insertUserId, insertTime, like, type, postSeq } =
+    props.data;
   const file = type === 'audio' ? props.data.link : '';
   const url = type !== 'audio' ? props.data.link : '';
   const startTime = type !== 'audio' ? props.data.startTime : '';
@@ -267,9 +268,9 @@ const ViewComponent = (props: { data: PostConfig }) => {
   };
 
   const formatFileName = () => {
-    const fileExtension = file.split('.').reverse()[0];
+    const fileName = file.split('/').reverse()[0];
 
-    return `${postName}.${fileExtension}`;
+    return decodeURIComponent(fileName);
   };
 
   const download = async () => {
@@ -345,7 +346,13 @@ const ViewComponent = (props: { data: PostConfig }) => {
             <div>{insertTime.slice(0, 10)}</div>
           </div>
           <div css={writerBox(insertUserId === userName)}>
-            <button>수정</button>
+            <button
+              onClick={() => {
+                void router.push(`/modify/${postSeq}`);
+              }}
+            >
+              수정
+            </button>
             <button
               onClick={() => {
                 setIsModalOpen(true);

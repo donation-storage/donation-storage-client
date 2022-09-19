@@ -154,7 +154,9 @@ const AudioRecord = ({ config }: { config: PostConfig }) => {
           </h1>
         </div>
         <div css={flexRow}>
-          <span css={subInfoStyle}>[01:26]</span>
+          {config.totalTime && (
+            <span css={subInfoStyle}>[config.totalTime]</span>
+          )}
           <span css={subInfoStyle}>{config.insertTime.slice(0, 10)}</span>
         </div>
       </div>
@@ -200,7 +202,7 @@ const VideoRecord = ({ config }: { config: PostConfig }) => {
           </h1>
         </div>
         <div css={flexRow}>
-          <span css={subInfoStyle}>영상제목</span>
+          {config.videoTitle && <span css={subInfoStyle}>영상제목</span>}
           <span css={subInfoStyle}>{config.insertTime.slice(0, 10)}</span>
         </div>
       </div>
