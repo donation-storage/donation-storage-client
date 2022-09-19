@@ -440,8 +440,9 @@ const Upload = () => {
       if (res?.ResultCode === 1) {
         void router.push('/');
       }
-    } catch (error) {
-      logger.log(error);
+    } catch {
+      setModalContent('업로드에 실패하였습니다.');
+      setIsModalOpen(true);
     }
   };
 

@@ -38,9 +38,14 @@ export interface PostRequestConfig {
   keyword?: string;
   tag?: string;
   type?: 'a' | 'v';
-  userId?: string;
+  userSeq?: string;
   start?: number;
   length?: number;
+}
+
+export interface LikedRequestConfig {
+  userSeq: string;
+  start?: number;
 }
 
 export interface PostConfig {
