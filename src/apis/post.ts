@@ -6,6 +6,7 @@
 import axios from 'axios';
 
 import type {
+  LikedRequestConfig,
   PostRequestConfig,
   PostResponseConfig,
   PostResultConfig,
@@ -21,6 +22,22 @@ export const getPostListApi = async (requestBody: PostRequestConfig) => {
         ...requestBody,
         length: requestBody.length || 10,
       },
+      {
+        withCredentials: true,
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    logger.log(error);
+  }
+};
+
+export const getLikedListApi = async (requestBody: LikedRequestConfig) => {
+  try {
+    const response = await axios.post<PostResponseConfig>(
+      `${process.env.NEXT_PUBLIC_SERVER_API}/post/user/like`,
+      requestBody,
       {
         withCredentials: true,
       },
@@ -117,8 +134,8 @@ export const postAudioApi = async (requestBody: FormData) => {
     );
 
     return response.data;
-  } catch (error) {
-    logger.log(error);
+  } catch {
+    throw new Error('failed to upload audio');
   }
 };
 
@@ -134,7 +151,49 @@ export const postVideoApi = async (requestBody: FormData) => {
     );
 
     return response.data;
-  } catch (error) {
-    logger.log(error);
+  } catch {
+    throw new Error('failed to upload video');
+  }
+};
+
+export const modifyAudioApi = async (
+  postSeq: number,
+  requestBody: FormData,
+) => {
+  try {
+    requestBody.append('postSeq', postSeq.toString());
+    const response = await axios.patch<PostResultConfig>(
+      `${process.env.NEXT_PUBLIC_SERVER_API}/post/audio`,
+      requestBody,
+      {
+        withCredentials: true,
+        headers: { 'Content-Type': 'multipart/form-data' },
+      },
+    );
+
+    return response.data;
+  } catch {
+    throw new Error('failed to upload video');
+  }
+};
+
+export const modifyVideoApi = async (
+  postSeq: number,
+  requestBody: FormData,
+) => {
+  try {
+    requestBody.append('postSeq', postSeq.toString());
+    const response = await axios.patch<PostResultConfig>(
+      `${process.env.NEXT_PUBLIC_SERVER_API}/post/video`,
+      requestBody,
+      {
+        withCredentials: true,
+        headers: { 'Content-Type': 'multipart/form-data' },
+      },
+    );
+
+    return response.data;
+  } catch {
+    throw new Error('failed to upload video');
   }
 };

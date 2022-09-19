@@ -17,7 +17,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       start,
       keyword,
       length: 5,
-      userId: userData.userName,
+      userSeq: String(userData.userSeq),
     });
 
     return { props: { ...pageData.props, word: keyword } };

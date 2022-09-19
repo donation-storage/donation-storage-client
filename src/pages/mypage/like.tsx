@@ -1,6 +1,6 @@
 import type { GetServerSideProps, NextPage } from 'next';
 
-import { getServerSidePropsForMypage } from '../../apis/ssr';
+import { getServerSidePropsForLike } from '../../apis/ssr';
 import { getUserInfoForSSR } from '../../apis/user';
 import MyPageList from '../../components/MyPageList';
 import MyPageSideBar from '../../components/MypageSideBar';
@@ -13,11 +13,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const userData = await getUserInfoForSSR(cookie!);
     const start = Number(context.query.page) || 1;
     const keyword = (context.query.search as string) || '';
-    const pageData = await getServerSidePropsForMypage({
+    const pageData = await getServerSidePropsForLike({
       start,
-      keyword,
-      length: 5,
-      userId: userData.userName,
+      userSeq: String(userData.userSeq),
     });
 
     return { props: { ...pageData.props, word: keyword } };
