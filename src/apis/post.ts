@@ -6,6 +6,7 @@
 import axios from 'axios';
 
 import type {
+  CommonResponseConfig,
   LikedRequestConfig,
   PostRequestConfig,
   PostResponseConfig,
@@ -195,5 +196,20 @@ export const modifyVideoApi = async (
     return response.data;
   } catch {
     throw new Error('failed to upload video');
+  }
+};
+
+export const deletePostApi = async (postSeq: number) => {
+  try {
+    const response = await axios.delete<CommonResponseConfig>(
+      `${process.env.NEXT_PUBLIC_SERVER_API}/post/${postSeq}`,
+      {
+        withCredentials: true,
+      },
+    );
+
+    return response.data;
+  } catch {
+    throw new Error('failed to delete post');
   }
 };
