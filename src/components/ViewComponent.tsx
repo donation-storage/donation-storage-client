@@ -16,8 +16,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { deleteLike, getIsLiked, getLikeCount, putLike } from '../apis/like';
+import { deletePostApi } from '../apis/post';
 import Confirm from '../items/Confirm';
 import Dialog from '../items/Dialog';
+import Modal from '../items/Modal';
 import VideoEmbed from '../items/VideoEmbed';
 import type { RootState } from '../redux/reducers';
 import {
@@ -31,7 +33,6 @@ import {
   splitStartTime,
   srcToFile,
 } from '../utills/common';
-import { logger } from '../utills/logger';
 import LoginModal from './LoginModal';
 
 const container = css`
@@ -219,7 +220,7 @@ const ViewComponent = (props: { data: PostConfig }) => {
   const router = useRouter();
   const embedRef = useRef<HTMLDivElement>(null);
   const [embedWidth, setEmbedWidth] = useState(640);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [likeCount, setLikeCount] = useState(like);
   const [isLiked, setIsLiked] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -228,6 +229,8 @@ const ViewComponent = (props: { data: PostConfig }) => {
   const { isLogin, userSeq, userName } = useSelector(
     (state: RootState) => state.loginReducer,
   );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState('');
 
   const getLike = useCallback(async () => {
     const [isLiked, likeCount] = await axios.all([
@@ -320,6 +323,19 @@ const ViewComponent = (props: { data: PostConfig }) => {
     };
   }, [handleClickOutside]);
 
+  const onDelete = async () => {
+    try {
+      const result = await deletePostApi(postSeq);
+
+      if (result.code === 1) {
+        void router.push('/');
+      }
+    } catch {
+      setModalContent('실패하였습니다.');
+      setIsModalOpen(true);
+    }
+  };
+
   return (
     <>
       <div css={container}>
@@ -355,7 +371,7 @@ const ViewComponent = (props: { data: PostConfig }) => {
             </button>
             <button
               onClick={() => {
-                setIsModalOpen(true);
+                setIsConfirmOpen(true);
               }}
             >
               삭제
@@ -429,15 +445,24 @@ const ViewComponent = (props: { data: PostConfig }) => {
         content={'삭제하시겠습니까?'}
         cancelText={'취소'}
         confirmText={'삭제'}
-        isOpen={isModalOpen}
+        isOpen={isConfirmOpen}
         onConfirm={() => {
-          logger.log('삭제');
+          void onDelete();
         }}
         onCancel={() => {
-          setIsModalOpen(false);
+          setIsConfirmOpen(false);
         }}
       />
       <LoginModal isOpen={isLoginModalOpen} modalRef={loginModalRef} />
+      {isModalOpen && (
+        <Modal
+          content={modalContent}
+          onClose={() => {
+            setIsModalOpen(false);
+            setModalContent('');
+          }}
+        />
+      )}
     </>
   );
 };
