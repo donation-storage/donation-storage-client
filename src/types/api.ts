@@ -97,8 +97,8 @@ export interface LikeCheckResponseConfig extends CommonResponseConfig {
 }
 
 export interface PostResultConfig {
-  ResultCode: number;
-  ResultData: string;
+  code: number;
+  message: string;
 }
 
 export interface TagResponseConfig extends CommonResponseConfig {

@@ -484,11 +484,13 @@ const Modify = (props: Props) => {
           ? await modifyAudioApi(postSeq, formData)
           : await modifyVideoApi(postSeq, formData);
 
-      if (res?.ResultCode === 1) {
-        void router.push('/');
+      if (res?.code === 1) {
+        void router.push(`/view/${postSeq}`);
+      } else {
+        throw new Error('failed to modify');
       }
     } catch {
-      setModalContent('업로드에 실패하였습니다.');
+      setModalContent('실패하였습니다.');
       setIsModalOpen(true);
     }
   };
