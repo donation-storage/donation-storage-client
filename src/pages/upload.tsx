@@ -437,8 +437,10 @@ const Upload = () => {
           ? await postAudioApi(formData)
           : await postVideoApi(formData);
 
-      if (res?.ResultCode === 1) {
+      if (res?.code === 1) {
         void router.push('/');
+      } else {
+        throw new Error('failed to upload');
       }
     } catch {
       setModalContent('업로드에 실패하였습니다.');
