@@ -202,7 +202,9 @@ const VideoRecord = ({ config }: { config: PostConfig }) => {
           </h1>
         </div>
         <div css={flexRow}>
-          {config.videoTitle && <span css={subInfoStyle}>영상제목</span>}
+          {config.videoTitle && (
+            <span css={subInfoStyle}>{config.videoTitle}</span>
+          )}
           <span css={subInfoStyle}>{config.insertTime.slice(0, 10)}</span>
         </div>
       </div>
