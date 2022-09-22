@@ -161,7 +161,7 @@ const AudioRecord = ({ config }: { config: PostConfig }) => {
         </div>
         <div css={flexRow}>
           {config.totalTime && (
-            <span css={subInfoStyle}>[config.totalTime]</span>
+            <span css={subInfoStyle}>[{config.totalTime}]</span>
           )}
           <span css={subInfoStyle}>{config.insertTime.slice(0, 10)}</span>
         </div>
