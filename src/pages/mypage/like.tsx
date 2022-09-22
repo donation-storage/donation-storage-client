@@ -16,6 +16,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const pageData = await getServerSidePropsForLike({
       start,
       userSeq: String(userData.userSeq),
+      length: 5,
     });
 
     return { props: { ...pageData.props, word: keyword } };
