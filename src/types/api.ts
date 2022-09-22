@@ -46,6 +46,7 @@ export interface PostRequestConfig {
 export interface LikedRequestConfig {
   userSeq: string;
   start?: number;
+  length?: number;
 }
 
 export interface PostConfig {
