@@ -15,6 +15,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const keyword = (context.query.search as string) || '';
     const pageData = await getServerSidePropsForLike({
       start,
+      keyword,
       userSeq: String(userData.userSeq),
       length: 5,
     });
