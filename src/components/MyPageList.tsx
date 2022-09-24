@@ -4,8 +4,10 @@ import { faTwitch, faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { faHeart, faMusic } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
 
 import Paginate from '../items/Paginate';
+import type { RootState } from '../redux/reducers';
 import { fontNanumSquare, primaryColor } from '../styles/common';
 import type { PostConfig } from '../types/api';
 import type { PageConfig } from '../types/common';
@@ -132,7 +134,6 @@ const noData = css`
 interface Props {
   page: PageConfig;
   data: PostConfig[];
-  nickname: string;
   title: string;
 }
 
@@ -228,8 +229,9 @@ const VideoRecord = ({ config }: { config: PostConfig }) => {
   );
 };
 
-const MypageList = ({ data, page, nickname, title }: Props) => {
+const MypageList = ({ data, page, title }: Props) => {
   const router = useRouter();
+  const { userName } = useSelector((state: RootState) => state.loginReducer);
 
   const setPage = (pageTo: number) => {
     const path = router.pathname.includes('/post')
@@ -247,7 +249,7 @@ const MypageList = ({ data, page, nickname, title }: Props) => {
   return (
     <div css={container}>
       <div css={titleBox}>
-        <h1>{nickname}</h1>
+        <h1>{userName}</h1>
         <h2>{title}</h2>
       </div>
       <div css={listBox}>

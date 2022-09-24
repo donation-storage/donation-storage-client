@@ -35,7 +35,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const Like: NextPage<MypageProps> = ({ list, page, word }: MypageProps) => (
   <MyPageSideBar path="liked">
     <MyPageSearch word={word} />
-    <MyPageList page={page} data={list} nickname="닉네임" title="좋아요한 글" />
+    <MyPageList page={page} data={list} title="좋아요한 글" />
   </MyPageSideBar>
 );
 
