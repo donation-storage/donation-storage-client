@@ -35,7 +35,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const Post = ({ list, page, word }: MypageProps) => (
   <MyPageSideBar path="posted">
     <MyPageSearch word={word} />
-    <MyPageList page={page} data={list} nickname="닉네임" title="작성한 글" />
+    <MyPageList page={page} data={list} title="작성한 글" />
   </MyPageSideBar>
 );
 
