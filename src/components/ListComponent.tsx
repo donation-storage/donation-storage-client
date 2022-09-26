@@ -69,6 +69,11 @@ const recordContainer = css`
   background-color: #fff;
   width: 100%;
   padding: 10px;
+  cursor: pointer;
+  :hover {
+    background-color: #f1f1f1;
+    transition: 1s;
+  }
 `;
 
 const recordBox = css`
@@ -90,6 +95,12 @@ const icon = (color: string) => css`
 const postNameStyle = css`
   font-size: 15px;
   ${fontNanumSquare}
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  @media (max-width: 1023px) {
+    max-width: 20vw;
+  }
   :hover {
     text-decoration: underline;
     cursor: pointer;
@@ -101,6 +112,19 @@ const subInfoStyle = css`
   font-size: 13.5px;
   color: #565656;
   font-weight: 600;
+`;
+
+const overflowStyle = css`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  @media (max-width: 1023px) {
+    max-width: 30vw;
+  }
+`;
+
+const dateStyle = css`
+  white-space: nowrap;
 `;
 
 const tagBox = css`
@@ -146,24 +170,24 @@ const AudioRecord = ({ config }: { config: PostConfig }) => {
   const router = useRouter();
 
   return (
-    <div css={recordContainer}>
+    <div
+      css={recordContainer}
+      onClick={() => {
+        void router.push(`/view/${config.postSeq}`);
+      }}
+    >
       <div css={recordBox}>
         <div css={flexRow}>
           <FontAwesomeIcon icon={faMusic} css={icon('#565656')} />
-          <h1
-            css={postNameStyle}
-            onClick={() => {
-              void router.push(`/view/${config.postSeq}`);
-            }}
-          >
-            {config.postName}
-          </h1>
+          <h1 css={postNameStyle}>{config.postName}</h1>
         </div>
         <div css={flexRow}>
           {config.totalTime && (
             <span css={subInfoStyle}>[{config.totalTime}]</span>
           )}
-          <span css={subInfoStyle}>{config.insertTime.slice(0, 10)}</span>
+          <span css={[subInfoStyle, dateStyle]}>
+            {config.insertTime.slice(0, 10)}
+          </span>
         </div>
       </div>
       <div css={tagBox}>
@@ -192,27 +216,27 @@ const VideoRecord = ({ config }: { config: PostConfig }) => {
   const router = useRouter();
 
   return (
-    <div css={recordContainer}>
+    <div
+      css={recordContainer}
+      onClick={() => {
+        void router.push(`/view/${config.postSeq}`);
+      }}
+    >
       <div css={recordBox}>
         <div css={flexRow}>
           <FontAwesomeIcon
             icon={isYoutube ? (faYoutube as any) : (faTwitch as any)}
             css={isYoutube ? icon('#ff0000') : icon(primaryColor)}
           />
-          <h1
-            css={postNameStyle}
-            onClick={() => {
-              void router.push(`/view/${config.postSeq}`);
-            }}
-          >
-            {config.postName}
-          </h1>
+          <h1 css={postNameStyle}>{config.postName}</h1>
         </div>
         <div css={flexRow}>
           {config.videoTitle && (
-            <span css={subInfoStyle}>{config.videoTitle}</span>
+            <span css={[subInfoStyle, overflowStyle]}>{config.videoTitle}</span>
           )}
-          <span css={subInfoStyle}>{config.insertTime.slice(0, 10)}</span>
+          <span css={[subInfoStyle, dateStyle]}>
+            {config.insertTime.slice(0, 10)}
+          </span>
         </div>
       </div>
       <div css={tagBox}>

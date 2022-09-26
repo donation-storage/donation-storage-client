@@ -17,7 +17,6 @@ import {
 } from '../../apis/post';
 import { getUserInfoForSSR } from '../../apis/user';
 import Modal from '../../items/Modal';
-import Switch from '../../items/Switch';
 import UploadAudio from '../../items/UploadAudio';
 import UploadVideoUrl from '../../items/UploadVideoUrl';
 import { fontSCroreDream, primaryColor } from '../../styles/common';
@@ -35,7 +34,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const userData = await getUserInfoForSSR(cookie!);
     const viewResponse = await getOnePostApi(context.params!.id as string);
 
-    if (String(userData.userSeq) !== viewResponse?.data.insertUserId) {
+    if (String(userData.userName) !== viewResponse?.data.insertUserId) {
       return {
         redirect: {
           permanent: false,
@@ -147,20 +146,6 @@ const tagTooltip = (isVisible: boolean) => css`
   padding: 10px;
   animation: ${fadeInDown} 0.4s;
   max-width: 95%;
-`;
-
-const toggleBox = css`
-  margin: 20px 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-`;
-
-const toggleText = (isActive: boolean) => css`
-  ${isActive && 'font-weight: bold;'}
-  color: ${isActive ? primaryColor : '#9a9a9a'};
-  transition: 0.3s;
-  cursor: pointer;
 `;
 
 const toolbarContainer = css`
