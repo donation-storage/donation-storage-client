@@ -20,6 +20,7 @@ import { deletePostApi } from '../apis/post';
 import Confirm from '../items/Confirm';
 import Dialog from '../items/Dialog';
 import Modal from '../items/Modal';
+import ShareModal from '../items/ShareModal';
 import VideoEmbed from '../items/VideoEmbed';
 import type { RootState } from '../redux/reducers';
 import {
@@ -226,6 +227,9 @@ const ViewComponent = (props: { data: PostConfig }) => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const loginModalRef = useRef<HTMLDivElement>(null);
   const loginButtonRef = useRef<HTMLButtonElement>(null);
+  const shareModalRef = useRef<HTMLDivElement>(null);
+  const shareButtonRef = useRef<HTMLButtonElement>(null);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const { isLogin, userSeq, userName } = useSelector(
     (state: RootState) => state.loginReducer,
   );
@@ -298,8 +302,8 @@ const ViewComponent = (props: { data: PostConfig }) => {
     }, 800);
   };
 
-  const copyVideoUrl = () => {
-    void navigator.clipboard.writeText(url);
+  const copyUrl = (string: string) => {
+    void navigator.clipboard.writeText(string);
     openDialog();
   };
 
@@ -310,6 +314,13 @@ const ViewComponent = (props: { data: PostConfig }) => {
         !loginButtonRef.current!.contains(target as Node)
       ) {
         setIsLoginModalOpen(false);
+      }
+
+      if (
+        !shareButtonRef.current!.contains(target as Node) &&
+        !shareModalRef.current!.contains(target as Node)
+      ) {
+        setIsShareModalOpen(false);
       }
     },
     [setIsLoginModalOpen],
@@ -408,7 +419,7 @@ const ViewComponent = (props: { data: PostConfig }) => {
                 </div>
                 <button
                   onClick={() => {
-                    copyVideoUrl();
+                    copyUrl(url);
                   }}
                 >
                   URL 복사
@@ -434,7 +445,12 @@ const ViewComponent = (props: { data: PostConfig }) => {
             <span>{likeCount}</span>
             <FontAwesomeIcon icon={isLiked ? faHeart : (faHeartNone as any)} />
           </button>
-          <button>
+          <button
+            onClick={() => {
+              setIsShareModalOpen((prev) => !prev);
+            }}
+            ref={shareButtonRef}
+          >
             <FontAwesomeIcon icon={faShareFromSquare} />
           </button>
         </div>
@@ -463,6 +479,14 @@ const ViewComponent = (props: { data: PostConfig }) => {
           }}
         />
       )}
+      <ShareModal
+        isOpen={isShareModalOpen}
+        modalRef={shareModalRef}
+        onClose={() => {
+          setIsShareModalOpen(false);
+        }}
+        copyUrl={copyUrl}
+      />
     </>
   );
 };

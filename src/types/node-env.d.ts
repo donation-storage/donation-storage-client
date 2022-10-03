@@ -9,5 +9,6 @@ declare namespace NodeJS {
     NEXT_PUBLIC_YOUTUBE_API_KEY: string | undefined;
     NEXT_PUBLIC_TWITCH_CLIENT_ID: string | undefined;
     NEXT_PUBLIC_TWITCH_CLIENT_SECRET: string | undefined;
+    NEXT_PUBLIC_KAKAO_JS_KEY: string | undefined;
   }
 }
