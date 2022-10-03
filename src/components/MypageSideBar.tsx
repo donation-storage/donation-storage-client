@@ -88,13 +88,6 @@ const menuStyle = (isSelected: boolean) => css`
   }
 `;
 
-const withdrawalButton = css`
-  margin: 0px 30px 20px auto;
-  ${fontNanumSquare}
-  font-weight: 100;
-  color: #7e7e7e;
-`;
-
 const contentSection = css`
   width: 100%;
   height: 100%;
@@ -146,7 +139,6 @@ const MyPageSideBar: React.FC<Props> = ({ children, path }) => {
               좋아요한 글
             </li>
           </ul>
-          <button css={withdrawalButton}>회원탈퇴</button>
         </div>
       </section>
       <section css={contentSection}>{children}</section>

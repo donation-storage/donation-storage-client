@@ -34,6 +34,7 @@
     "react-query": "^3.39.1",
     "react-redux": "^8.0.2",
     "react-select": "^5.4.0",
+    "react-share": "^4.4.0",
     "redux": "^4.2.0",
     "redux-thunk": "^2.4.1",
     "sonarjs": "^1.0.0"

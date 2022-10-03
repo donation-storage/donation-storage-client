@@ -19,6 +19,7 @@ import Head from '../items/Head';
 import initMockAPI from '../mocks';
 import { login } from '../redux/actions';
 import { wrapper } from '../redux/store';
+import { kakaoInit } from '../scripts/Kakao';
 import { globalStyles } from '../styles/reset';
 import { logger } from '../utills/logger';
 
@@ -52,6 +53,10 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     void getUserInfo();
   }, [getUserInfo]);
+
+  useEffect(() => {
+    kakaoInit();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
