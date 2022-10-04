@@ -1,12 +1,22 @@
 import { css } from '@emotion/react';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import {
   FacebookIcon,
   FacebookShareButton,
   TwitterIcon,
   TwitterShareButton,
 } from 'react-share';
+
+const background = (isOpen: boolean) => css`
+  position: absolute;
+  display: ${isOpen ? 'flex' : 'none'};
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+`;
 
 const container = (isOpen: boolean) => css`
   position: absolute;
@@ -18,7 +28,7 @@ const container = (isOpen: boolean) => css`
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #fff;
-  padding: 25px 40px;
+  padding: 20px 25px;
   gap: 15px;
   border-radius: 10px;
   box-shadow: 0px -1px 6px rgba(0, 0, 0, 0.075);
@@ -66,43 +76,49 @@ const ShareModal = ({ isOpen, modalRef, onClose, copyUrl }: Props) => {
   const router = useRouter();
   const url = `${process.env.NEXT_PUBLIC_CLINET_ORIGIN}${router.asPath}`;
 
-  useEffect(() => {
+  const sharekakao = () => {
     const { Kakao } = window;
-    Kakao.Share.createScrapButton({
-      container: '#kakao-share',
+
+    Kakao.Share.sendScrap({
       requestUrl: url,
     });
-  }, [url]);
+  };
 
   return (
-    <div ref={modalRef} css={container(isOpen)}>
-      <div css={urlStyle}>{url}</div>
-      <div css={buttonBox}>
-        <FacebookShareButton url={url}>
-          <FacebookIcon size={32} round />
-        </FacebookShareButton>
-        <TwitterShareButton url={url}>
-          <TwitterIcon size={32} round />
-        </TwitterShareButton>
-        <button id="kakao-share">
-          <img
-            src="/images/icon-kakao.png"
-            alt="kakao"
-            css={css`
-              width: 32px;
-              height: 32px;
-            `}
-          />
-        </button>
-        <button
-          onClick={() => {
-            copyUrl(url);
-            onClose();
-          }}
-          css={urlCopyButton}
-        >
-          복사
-        </button>
+    <div css={background(isOpen)}>
+      <div ref={modalRef} css={container(isOpen)}>
+        <div css={urlStyle}>{url}</div>
+        <div css={buttonBox}>
+          <FacebookShareButton url={url}>
+            <FacebookIcon size={32} round />
+          </FacebookShareButton>
+          <TwitterShareButton url={url}>
+            <TwitterIcon size={32} round />
+          </TwitterShareButton>
+          <button
+            onClick={() => {
+              sharekakao();
+            }}
+          >
+            <img
+              src="/images/icon-kakao.png"
+              alt="kakao"
+              css={css`
+                width: 32px;
+                height: 32px;
+              `}
+            />
+          </button>
+          <button
+            onClick={() => {
+              copyUrl(url);
+              onClose();
+            }}
+            css={urlCopyButton}
+          >
+            복사
+          </button>
+        </div>
       </div>
     </div>
   );
